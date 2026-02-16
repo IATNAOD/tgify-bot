@@ -1534,10 +1534,10 @@ interface Msg {
 }
 
 const Msg: Msg = {
-  isAccessible() {
+  isAccessible(): this is MaybeMessage<tg.Message> {
     return 'date' in this && this.date !== 0
   },
-  has(...keys) {
+  has(...keys): this is MaybeMessage<Keyed<tg.Message, any>> {
     return keys.some(
       (key) =>
         // @ts-expect-error TS doesn't understand key

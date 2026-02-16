@@ -1,0 +1,38 @@
+name: Publish Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # - run: npm run build:docs
+      # - name: Make GitHub links absolute
+      #   run: shopt -s globstar;
+      #     sed
+      #     --in-place
+      #     --expression='s:/develop/docs/:/${{ github.sha }}/docs/:g'
+      #     --expression='s:<img src="docs/assets/:<img src="media/:g'
+      #     docs/build/**/*.html;
+      # - name: Deploy to GitHub Pages
+      #   uses: peaceiris/actions-gh-pages@v3
+      #   with:
+      #     publish_dir: ./docs/build
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn install --frozen-lockfile
+      - run: npm publish
