@@ -1,16 +1,16 @@
 {
-  "name": "telegraf",
+  "name": "tgify",
   "version": "4.16.3",
   "description": "Modern Telegram Bot Framework",
   "license": "MIT",
-  "author": "The Telegraf Contributors",
-  "homepage": "https://telegraf.js.org",
+  "author": "IATNAOD",
+  "homepage": "https://tgify.iatnaod.space",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/telegraf/telegraf.git"
+    "url": "git+ssh://git@github.com:IATNAOD/tgify.git"
   },
   "bugs": {
-    "url": "https://github.com/telegraf/telegraf/issues"
+    "url": "https://github.com/IATNAOD/tgify/issues"
   },
   "main": "lib/index.js",
   "exports": {
@@ -67,7 +67,7 @@
     "session.*"
   ],
   "bin": {
-    "telegraf": "lib/cli.mjs"
+    "tgify": "lib/cli.mjs"
   },
   "scripts": {
     "prepare": "npm run --silent build",
@@ -125,7 +125,7 @@
     "typescript": "^5.2.2"
   },
   "keywords": [
-    "telegraf",
+    "tgify",
     "telegram",
     "telegram bot api",
     "bot",

@@ -1,31 +1,22 @@
 <header>
 
 <div align="center">
-<img src="docs/assets/logo.svg" alt="logo" height="90" align="center">
-<h1 align="center">telegraf.js</h1>
+<h1 align="center">tgify</h1>
 
 <p>Modern Telegram Bot API framework for Node.js</p>
 
 <a href="https://core.telegram.org/bots/api">
 	<img src="https://img.shields.io/badge/Bot%20API-v7.1-f36caf.svg?style=flat-square" alt="Bot API Version" />
 </a>
-<a href="https://packagephobia.com/result?p=telegraf,node-telegram-bot-api">
-	<img src="https://flat.badgen.net/packagephobia/install/telegraf" alt="install size" />
+<a href="https://packagephobia.com/result?p=tgify,node-telegram-bot-api">
+	<img src="https://flat.badgen.net/packagephobia/install/tgify" alt="install size" />
 </a>
-<a href="https://github.com/telegraf/telegraf">
-	<img src="https://img.shields.io/github/languages/top/telegraf/telegraf?style=flat-square&logo=github" alt="GitHub top language" />
-</a>
-<a href="https://telegram.me/TelegrafJSChat">
-	<img src="https://img.shields.io/badge/English%20chat-grey?style=flat-square&logo=telegram" alt="English chat" />
+<a href="https://github.com/IATNAOD/tgify">
+	<img src="https://img.shields.io/github/languages/top/IATNAOD/tgify?style=flat-square&logo=github" alt="GitHub top language" />
 </a>
 </div>
 
 </header>
-
-## For 3.x users
-
-- [3.x docs](https://telegraf.js.org/v3)
-- [4.0 release notes](https://github.com/telegraf/telegraf/releases/tag/v4.0.0)
 
 ## Introduction
 
@@ -33,13 +24,13 @@ Bots are special [Telegram](https://telegram.org) accounts designed to handle me
 Users can interact with bots by sending them command messages in private or group chats.
 These accounts serve as an interface for code running somewhere on your server.
 
-Telegraf is a library that makes it simple for you to develop your own Telegram bots using JavaScript or [TypeScript](https://www.typescriptlang.org/).
+Tgify is a library that makes it simple for you to develop your own Telegram bots using JavaScript or [TypeScript](https://www.typescriptlang.org/).
 
 ### Features
 
 - Full [Telegram Bot API 7.1](https://core.telegram.org/bots/api) support
-- [Excellent TypeScript typings](https://github.com/telegraf/telegraf/releases/tag/v4.0.0)
-- [Lightweight](https://packagephobia.com/result?p=telegraf,node-telegram-bot-api)
+- [Excellent TypeScript typings](https://github.com/IATNAOD/tgify/releases/tag/v4.0.0)
+- [Lightweight](https://packagephobia.com/result?p=tgify,node-telegram-bot-api)
 - [AWS **λ**](https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-handler.html)
   / [Firebase](https://firebase.google.com/products/functions/)
   / [Glitch](https://glitch.com/edit/#!/dashing-light)
@@ -84,14 +75,8 @@ For additional bot examples see the new [`docs repo`](https://github.com/feather
 ### Resources
 
 - [Getting started](#getting-started)
-- [API reference](https://telegraf.js.org/modules.html)
-- Telegram groups (sorted by number of members):
-  - [English](https://t.me/TelegrafJSChat)
-  - [Russian](https://t.me/telegrafjs_ru)
-  - [Uzbek](https://t.me/botjs_uz)
-  - [Ethiopian](https://t.me/telegraf_et)
-- [GitHub Discussions](https://github.com/telegraf/telegraf/discussions)
-- [Dependent repositories](https://libraries.io/npm/telegraf/dependent_repositories)
+- [GitHub Discussions](https://github.com/IATNAOD/tgify/discussions)
+- [Dependent repositories](https://libraries.io/npm/tgify/dependent_repositories)
 
 ## Getting started
 
@@ -106,19 +91,19 @@ BotFather will give you a _token_, something like `123456789:AbCdefGhIJKlmNoPQRs
 ### Installation
 
 ```shellscript
-$ npm install telegraf
+$ npm install tgify
 ```
 
 or
 
 ```shellscript
-$ yarn add telegraf
+$ yarn add tgify
 ```
 
 or
 
 ```shellscript
-$ pnpm add telegraf
+$ pnpm add tgify
 ```
 
 ### `Telegraf` class
@@ -135,27 +120,6 @@ It contains the `update`, `botInfo`, and `telegram` for making arbitrary Bot API
 as well as shorthand methods and getters.
 
 This is probably the class you'll be using the most.
-
-<!--
-TODO: Verify and update list
-Here is a list of
-
-#### Known middleware
-
-- [Internationalization](https://github.com/telegraf/telegraf-i18n)—simplifies selecting the right translation to use when responding to a user.
-- [Redis powered session](https://github.com/telegraf/telegraf-session-redis)—store session data using Redis.
-- [Local powered session (via lowdb)](https://github.com/RealSpeaker/telegraf-session-local)—store session data in a local file.
-- [Rate-limiting](https://github.com/telegraf/telegraf-ratelimit)—apply rate limitting to chats or users.
-- [Bottleneck powered throttling](https://github.com/KnightNiwrem/telegraf-throttler)—apply throttling to both incoming updates and outgoing API calls.
-- [Menus via inline keyboards](https://github.com/EdJoPaTo/telegraf-inline-menu)—simplify creating interfaces based on menus.
-- [Stateless Questions](https://github.com/EdJoPaTo/telegraf-stateless-question)—create stateless questions to Telegram users working in privacy mode.
-- [Natural language processing via wit.ai](https://github.com/telegraf/telegraf-wit)
-- [Natural language processing via recast.ai](https://github.com/telegraf/telegraf-recast)
-- [Multivariate and A/B testing](https://github.com/telegraf/telegraf-experiments)—add experiments to see how different versions of a feature are used.
-- [Powerfull bot stats via Mixpanel](https://github.com/telegraf/telegraf-mixpanel)
-- [statsd integration](https://github.com/telegraf/telegraf-statsd)
-- [and more...](https://www.npmjs.com/search?q=telegraf-)
--->
 
 #### Shorthand methods
 
@@ -258,7 +222,6 @@ createServer(tlsOptions, await bot.createWebhook({ domain: "example.com" })).lis
 - [`express` example integration](https://github.com/feathers-studio/telegraf-docs/blob/master/examples/webhook/express.ts)
 - [`fastify` example integration](https://github.com/feathers-studio/telegraf-docs/blob/master/examples/webhook/fastify.ts)
 - [`koa` example integration](https://github.com/feathers-studio/telegraf-docs/blob/master/examples/webhook/koa.ts)
-- [NestJS framework integration module](https://github.com/bukhalo/nestjs-telegraf)
 - [Cloudflare Workers integration module](https://github.com/Tsuk1ko/cfworker-middware-telegraf)
 - Use [`bot.handleUpdate`](https://telegraf.js.org/classes/Telegraf-1.html#handleupdate) to write new integrations
 
@@ -360,9 +323,9 @@ With this simple ability, you can:
 
 ### Usage with TypeScript
 
-Telegraf is written in TypeScript and therefore ships with declaration files for the entire library.
+Tgify is written in TypeScript and therefore ships with declaration files for the entire library.
 Moreover, it includes types for the complete Telegram API via the [`typegram`](https://github.com/KnorpelSenf/typegram) package.
-While most types of Telegraf's API surface are self-explanatory, there's some notable things to keep in mind.
+While most types of Tgify's API surface are self-explanatory, there's some notable things to keep in mind.
 
 #### Extending `Context`
 

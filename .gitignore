@@ -39,10 +39,10 @@ node_modules
 .vscode
 /lib
 /docs/build
-/telegraf-docs/
+/tgify-docs/
 /typings/
 tsconfig.tsbuildinfo
-/bin/telegraf.mjs
+/bin/tgify.mjs
 
 # Linting cache
 .eslintcache

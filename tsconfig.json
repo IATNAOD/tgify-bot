@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "Node16",
+    "module": "node18",
     "declaration": true,
     "declarationMap": true,
     "declarationDir": "typings/",
@@ -22,7 +22,7 @@
     "excludeExternals": true,
     "includeVersion": true,
     "media": "docs/assets/",
-    "name": "telegraf.js",
+    "name": "tgify.js",
     "out": "docs/build/",
     "readme": "README.md"
   },
