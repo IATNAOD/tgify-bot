@@ -16,6 +16,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - run: yarn install --frozen-lockfile --ignore-scripts
+
       # - run: npm run build:docs
       # - name: Make GitHub links absolute
       #   run: shopt -s globstar;
