@@ -1,3 +1,4 @@
+export { Tgify } from './tgify';
 export { Telegraf } from './telegraf'
 export { Context, NarrowedContext } from './context'
 export { Composer } from './composer'

@@ -14,10 +14,10 @@ type HideableIKBtn = Hideable<InlineKeyboardButton>
 
 export class Markup<
   T extends
-    | InlineKeyboardMarkup
-    | ReplyKeyboardMarkup
-    | ReplyKeyboardRemove
-    | ForceReply,
+  | InlineKeyboardMarkup
+  | ReplyKeyboardMarkup
+  | ReplyKeyboardRemove
+  | ForceReply,
 > {
   constructor(readonly reply_markup: T) {}
 
@@ -124,7 +124,7 @@ function buildKeyboard<B extends HideableKBtn | HideableIKBtn>(
     options.wrap !== undefined
       ? options.wrap
       : (_btn: B, _index: number, currentRow: B[]) =>
-          currentRow.length >= options.columns
+        currentRow.length >= options.columns
   let currentRow: B[] = []
   let index = 0
   for (const btn of buttons.filter((button) => !button.hide)) {

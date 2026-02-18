@@ -25,8 +25,8 @@ const help = () => console.log(helpMsg)
 
 export type Expand<T> = T extends object
   ? T extends infer O
-    ? { [K in keyof O]: O[K] }
-    : never
+  ? { [K in keyof O]: O[K] }
+  : never
   : T
 
 type Parsed = {
@@ -127,17 +127,17 @@ export async function main(argv: string[], env: Env = {}) {
 
   type Mod =
     | {
-        default: Middleware<Context>
-        botHandler: undefined
-        httpHandler: undefined
-        tlsOptions: undefined
-      }
+      default: Middleware<Context>
+      botHandler: undefined
+      httpHandler: undefined
+      tlsOptions: undefined
+    }
     | {
-        default: undefined
-        botHandler: Middleware<Context>
-        httpHandler?: RequestListener
-        tlsOptions?: TlsOptions
-      }
+      default: undefined
+      botHandler: Middleware<Context>
+      httpHandler?: RequestListener
+      tlsOptions?: TlsOptions
+    }
 
   try {
     if (args.logs) d.enable('telegraf:*')

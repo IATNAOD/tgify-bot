@@ -28,6 +28,10 @@ These accounts serve as an interface for code running somewhere on your server.
 
 Tgify is a library that makes it simple for you to develop your own Telegram bots using JavaScript or [TypeScript](https://www.typescriptlang.org/).
 
+### Release-notes
+
+- Version [1.0.0](https://github.com/IATNAOD/tgify/tree/main/release-notes/1.0.0.md) from 18.02.26
+
 ### Features
 
 - Full [Telegram Bot API 7.1](https://core.telegram.org/bots/api) support
@@ -44,10 +48,10 @@ Tgify is a library that makes it simple for you to develop your own Telegram bot
 ### Example
 
 ```js
-const { Telegraf } = require('@tgify/tgify')
+const { Tgify } = require('@tgify/tgify')
 const { message } = require('@tgify/tgify/filters')
 
-const bot = new Telegraf(process.env.BOT_TOKEN)
+const bot = new Tgify(process.env.BOT_TOKEN)
 bot.start((ctx) => ctx.reply('Welcome'))
 bot.help((ctx) => ctx.reply('Send me a sticker'))
 bot.on(message('sticker'), (ctx) => ctx.reply('👍'))
@@ -58,6 +62,8 @@ bot.launch()
 process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
 ```
+
+The `Telegraf` class can also be used, it will replicate all the basic functionality:
 
 ```js
 const { Telegraf } = require('@tgify/tgify')
@@ -108,16 +114,16 @@ or
 $ pnpm add @tgify/tgify
 ```
 
-### `Telegraf` class
+### `Tgify` class
 
-[`Telegraf`] instance represents your bot. It's responsible for obtaining updates and passing them to your handlers.
+[`Tgify`] instance represents your bot. It's responsible for obtaining updates and passing them to your handlers.
 
 Start by [listening to commands](https://telegraf.js.org/classes/Telegraf-1.html#command) and [launching](https://telegraf.js.org/classes/Telegraf-1.html#launch) your bot.
 
 ### `Context` class
 
 `ctx` you can see in every example is a [`Context`] instance.
-[`Telegraf`] creates one for each incoming update and passes it to your middleware.
+[`Tgify`] creates one for each incoming update and passes it to your middleware.
 It contains the `update`, `botInfo`, and `telegram` for making arbitrary Bot API requests,
 as well as shorthand methods and getters.
 
@@ -126,10 +132,10 @@ This is probably the class you'll be using the most.
 #### Shorthand methods
 
 ```js
-import { Telegraf } from '@tgify/tgify'
+import { Tgify } from '@tgify/tgify'
 import { message } from '@tgify/tgify/filters'
 
-const bot = new Telegraf(process.env.BOT_TOKEN)
+const bot = new Tgify(process.env.BOT_TOKEN)
 
 bot.command('quit', async (ctx) => {
   // Explicit usage
@@ -176,10 +182,10 @@ process.once('SIGTERM', () => bot.stop('SIGTERM'))
 ### Webhooks
 
 ```TS
-import { Telegraf } from "@tgify/tgify";
+import { Tgify } from "@tgify/tgify";
 import { message } from '@tgify/tgify/filters';
 
-const bot = new Telegraf(token);
+const bot = new Tgify(token);
 
 bot.on(message("text"), ctx => ctx.reply("Hello"));
 
@@ -203,7 +209,7 @@ bot.launch({
 });
 ```
 
-Use `createWebhook()` if you want to attach Telegraf to an existing http server.
+Use `createWebhook()` if you want to attach Tgify to an existing http server.
 
 <!-- global bot, tlsOptions -->
 
@@ -229,7 +235,7 @@ createServer(tlsOptions, await bot.createWebhook({ domain: "example.com" })).lis
 
 ### Error handling
 
-If middleware throws an error or times out, Telegraf calls `bot.handleError`. If it rethrows, update source closes, and then the error is printed to console and process terminates. If it does not rethrow, the error is swallowed.
+If middleware throws an error or times out, Tgify calls `bot.handleError`. If it rethrows, update source closes, and then the error is printed to console and process terminates. If it does not rethrow, the error is swallowed.
 
 Default `bot.handleError` always rethrows. You can overwrite it using `bot.catch` if you need to.
 
@@ -287,10 +293,10 @@ As in Koa and some other middleware-based libraries,
 `await next()` will call next middleware and wait for it to finish:
 
 ```TS
-import { Telegraf } from '@tgify/tgify';
+import { Tgify } from '@tgify/tgify';
 import { message } from '@tgify/tgify/filters';
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Tgify(process.env.BOT_TOKEN);
 
 bot.use(async (ctx, next) => {
   console.time(`Processing update ${ctx.update.update_id}`);
@@ -316,7 +322,7 @@ With this simple ability, you can:
 - reuse [other people's code](https://www.npmjs.com/search?q=telegraf-),
 - do whatever **you** come up with!
 
-[`Telegraf`]: https://telegraf.js.org/classes/Telegraf-1.html
+[`Tgify`]: https://telegraf.js.org/classes/Telegraf-1.html
 [`Composer`]: https://telegraf.js.org/classes/Composer.html
 [`Context`]: https://telegraf.js.org/classes/Context.html
 [`Router`]: https://telegraf.js.org/classes/Router.html
@@ -332,12 +338,12 @@ While most types of Tgify's API surface are self-explanatory, there's some notab
 #### Extending `Context`
 
 The exact shape of `ctx` can vary based on the installed middleware.
-Some custom middleware might register properties on the context object that Telegraf is not aware of.
+Some custom middleware might register properties on the context object that Tgify is not aware of.
 Consequently, you can change the type of `ctx` to fit your needs in order for you to have proper TypeScript types for your data.
 This is done through Generics:
 
 ```ts
-import { Context, Telegraf } from '@tgify/tgify'
+import { Context, Tgify } from '@tgify/tgify'
 
 // Define your own context type
 interface MyContext extends Context {
@@ -346,7 +352,7 @@ interface MyContext extends Context {
 }
 
 // Create your bot and tell it about your context type
-const bot = new Telegraf<MyContext>('SECRET TOKEN')
+const bot = new Tgify<MyContext>('SECRET TOKEN')
 
 // Register middleware and launch your bot as usual
 bot.use((ctx, next) => {

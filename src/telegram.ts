@@ -42,9 +42,8 @@ export class Telegram extends ApiClient {
     }
 
     return new URL(
-      `./file/${this.options.apiMode}${this.token}${
-        this.options.testEnv ? '/test' : ''
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      `./file/${this.options.apiMode}${this.token}${this.options.testEnv ? '/test' : ''
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       }/${fileId.file_path!}`,
       this.options.apiRoot
     )
@@ -460,7 +459,7 @@ export class Telegram extends ApiClient {
   sendPoll(
     chatId: number | string,
     question: string,
-    options: readonly string[],
+    options: readonly tg.InputPollOption[],
     extra?: tt.ExtraPoll
   ) {
     return this.callApi('sendPoll', {
@@ -481,7 +480,7 @@ export class Telegram extends ApiClient {
   sendQuiz(
     chatId: number | string,
     question: string,
-    options: readonly string[],
+    options: readonly tg.InputPollOption[],
     extra?: tt.ExtraPoll
   ) {
     return this.callApi('sendPoll', {
@@ -941,9 +940,9 @@ export class Telegram extends ApiClient {
     markup: tg.InlineKeyboardMarkup | undefined
   ) {
     return this.callApi('editMessageReplyMarkup', {
-      chat_id: chatId,
-      message_id: messageId,
-      inline_message_id: inlineMessageId,
+      ...(chatId !== undefined && { chat_id: chatId }),
+      ...(messageId !== undefined && { message_id: messageId }),
+      ...(inlineMessageId !== undefined && { inline_message_id: inlineMessageId }),
       reply_markup: markup,
     })
   }
@@ -1311,16 +1310,19 @@ export class Telegram extends ApiClient {
    * HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using
    * Input helpers. Animated and video sticker set thumbnails can't be uploaded via HTTP URL.
    * If omitted, then the thumbnail is dropped and the first sticker is used as the thumbnail.
+   * @param format Format of the sticker set thumbnail; must be one of "static", "animated", or "video"
    */
   setStickerSetThumbnail(
     name: string,
     userId: number,
-    thumbnail?: tg.Opts<'setStickerSetThumbnail'>['thumbnail']
+    thumbnail?: tg.Opts<'setStickerSetThumbnail'>['thumbnail'],
+    format: tg.Opts<'setStickerSetThumbnail'>['format'] = 'static'
   ) {
     return this.callApi('setStickerSetThumbnail', {
       name,
-      user_id: userId,
+      format,
       thumbnail,
+      user_id: userId,
     })
   }
 

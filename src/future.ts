@@ -1,4 +1,4 @@
-import { ReplyParameters } from '@telegraf/types'
+import { ReplyParameters } from '@tgify/types'
 import Context from './context'
 import { Middleware } from './middleware'
 

@@ -245,9 +245,9 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
         // https://github.com/microsoft/TypeScript/pull/51502
         typeof filter !== 'string'
           ? // filter is a type guard
-            filter(this.update)
+          filter(this.update)
           : // check if filter is the update type
-            filter in this.update
+          filter in this.update
       )
         return true
 
@@ -856,7 +856,7 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   /**
    * @see https://core.telegram.org/bots/api#sendpoll
    */
-  sendPoll(poll: string, options: readonly string[], extra?: tt.ExtraPoll) {
+  sendPoll(poll: string, options: readonly tg.InputPollOption[], extra?: tt.ExtraPoll) {
     this.assert(this.chat, 'sendPoll')
     return this.telegram.sendPoll(this.chat.id, poll, options, {
       message_thread_id: getThreadId(this),
@@ -874,7 +874,7 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   /**
    * @see https://core.telegram.org/bots/api#sendpoll
    */
-  sendQuiz(quiz: string, options: readonly string[], extra?: tt.ExtraPoll) {
+  sendQuiz(quiz: string, options: readonly tg.InputPollOption[], extra?: tt.ExtraPoll) {
     this.assert(this.chat, 'sendQuiz')
     return this.telegram.sendQuiz(this.chat.id, quiz, options, {
       message_thread_id: getThreadId(this),
@@ -1518,8 +1518,8 @@ type UpdateTypes<U extends Deunionize<tg.Update>> = Extract<
 
 export type GetUpdateContent<U extends tg.Update> =
   U extends tg.Update.CallbackQueryUpdate
-    ? U['callback_query']['message']
-    : U[UpdateTypes<U>]
+  ? U['callback_query']['message']
+  : U[UpdateTypes<U>]
 
 type Getter<U extends Deunionize<tg.Update>, P extends string> = PropOr<
   GetUpdateContent<U>,
@@ -1575,22 +1575,22 @@ function getMessageFromAnySource<U extends tg.Update>(ctx: Context<U>) {
 type GetUserFromAnySource<U extends tg.Update> =
   // check if it's a message type with `from`
   GetMsg<U> extends { from: tg.User }
-    ? tg.User
-    : U extends  // these updates have `from`
-        | tg.Update.CallbackQueryUpdate
-        | tg.Update.InlineQueryUpdate
-        | tg.Update.ShippingQueryUpdate
-        | tg.Update.PreCheckoutQueryUpdate
-        | tg.Update.ChosenInlineResultUpdate
-        | tg.Update.ChatMemberUpdate
-        | tg.Update.MyChatMemberUpdate
-        | tg.Update.ChatJoinRequestUpdate
-        // these updates have `user`
-        | tg.Update.MessageReactionUpdate
-        | tg.Update.PollAnswerUpdate
-        | tg.Update.ChatBoostUpdate
-    ? tg.User
-    : undefined
+  ? tg.User
+  : U extends  // these updates have `from`
+  | tg.Update.CallbackQueryUpdate
+  | tg.Update.InlineQueryUpdate
+  | tg.Update.ShippingQueryUpdate
+  | tg.Update.PreCheckoutQueryUpdate
+  | tg.Update.ChosenInlineResultUpdate
+  | tg.Update.ChatMemberUpdate
+  | tg.Update.MyChatMemberUpdate
+  | tg.Update.ChatJoinRequestUpdate
+  // these updates have `user`
+  | tg.Update.MessageReactionUpdate
+  | tg.Update.PollAnswerUpdate
+  | tg.Update.ChatBoostUpdate
+  ? tg.User
+  : undefined
 
 function getUserFromAnySource<U extends tg.Update>(ctx: Context<U>) {
   if (ctx.callbackQuery) return ctx.callbackQuery.from

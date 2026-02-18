@@ -1,30 +1,32 @@
 import {
-  InlineKeyboardButton,
   KeyboardButton,
+  InlineKeyboardButton,
   KeyboardButtonRequestChat,
   KeyboardButtonRequestUsers,
 } from './core/types/typegram'
 
 type Hideable<B> = B & { hide: boolean }
 
+
 export function text(
   text: string,
-  hide = false
-): Hideable<KeyboardButton.CommonButton> {
-  return { text, hide }
+  hide = false,
+  extra?: Pick<KeyboardButton.Text, 'style' | 'icon_custom_emoji_id'>,
+): Hideable<KeyboardButton.Text> {
+  return { text, hide, ...extra }
 }
 
 export function contactRequest(
   text: string,
   hide = false
-): Hideable<KeyboardButton.RequestContactButton> {
+): Hideable<KeyboardButton.RequestContact> {
   return { text, request_contact: true, hide }
 }
 
 export function locationRequest(
   text: string,
   hide = false
-): Hideable<KeyboardButton.RequestLocationButton> {
+): Hideable<KeyboardButton.RequestLocation> {
   return { text, request_location: true, hide }
 }
 
@@ -32,7 +34,7 @@ export function pollRequest(
   text: string,
   type?: 'quiz' | 'regular',
   hide = false
-): Hideable<KeyboardButton.RequestPollButton> {
+): Hideable<KeyboardButton.RequestPoll> {
   return { text, request_poll: { type }, hide }
 }
 
@@ -42,7 +44,7 @@ export function userRequest(
   request_id: number,
   extra?: Omit<KeyboardButtonRequestUsers, 'request_id' | 'text'>,
   hide = false
-): Hideable<KeyboardButton.RequestUsersButton> {
+): Hideable<KeyboardButton.RequestUsers> {
   return {
     text,
     request_users: { request_id, ...extra },
@@ -59,7 +61,7 @@ export function botRequest(
     'request_id' | 'user_is_bot' | 'text'
   >,
   hide = false
-): Hideable<KeyboardButton.RequestUsersButton> {
+): Hideable<KeyboardButton.RequestUsers> {
   return {
     text,
     request_users: { request_id, user_is_bot: true, ...extra },
@@ -78,7 +80,7 @@ export function groupRequest(
   request_id: number,
   extra?: KeyboardButtonRequestGroup,
   hide = false
-): Hideable<KeyboardButton.RequestChatButton> {
+): Hideable<KeyboardButton.RequestChat> {
   return {
     text,
     request_chat: { request_id, chat_is_channel: false, ...extra },
@@ -97,7 +99,7 @@ export function channelRequest(
   request_id: number,
   extra?: KeyboardButtonRequestChannel,
   hide = false
-): Hideable<KeyboardButton.RequestChatButton> {
+): Hideable<KeyboardButton.RequestChat> {
   return {
     text,
     request_chat: { request_id, chat_is_channel: true, ...extra },
@@ -108,47 +110,53 @@ export function channelRequest(
 export function url(
   text: string,
   url: string,
-  hide = false
-): Hideable<InlineKeyboardButton.UrlButton> {
-  return { text, url, hide }
+  hide = false,
+  extra?: Pick<InlineKeyboardButton.Url, 'style' | 'icon_custom_emoji_id'>,
+): Hideable<InlineKeyboardButton.Url> {
+  return { text, url, hide, ...extra }
 }
 
 export function callback(
   text: string,
   data: string,
-  hide = false
-): Hideable<InlineKeyboardButton.CallbackButton> {
-  return { text, callback_data: data, hide }
+  hide = false,
+  extra?: Pick<InlineKeyboardButton.Callback, 'style' | 'icon_custom_emoji_id'>,
+): Hideable<InlineKeyboardButton.Callback> {
+  return { text, callback_data: data, hide, ...extra }
 }
 
 export function switchToChat(
   text: string,
   value: string,
-  hide = false
-): Hideable<InlineKeyboardButton.SwitchInlineButton> {
-  return { text, switch_inline_query: value, hide }
+  hide = false,
+  extra?: Pick<InlineKeyboardButton.SwitchInline, 'style' | 'icon_custom_emoji_id'>,
+): Hideable<InlineKeyboardButton.SwitchInline> {
+  return { text, switch_inline_query: value, hide, ...extra }
 }
 
 export function switchToCurrentChat(
   text: string,
   value: string,
-  hide = false
-): Hideable<InlineKeyboardButton.SwitchInlineCurrentChatButton> {
-  return { text, switch_inline_query_current_chat: value, hide }
+  hide = false,
+  extra?: Pick<InlineKeyboardButton.SwitchInlineCurrentChat, 'style' | 'icon_custom_emoji_id'>,
+): Hideable<InlineKeyboardButton.SwitchInlineCurrentChat> {
+  return { text, switch_inline_query_current_chat: value, hide, ...extra }
 }
 
 export function game(
   text: string,
-  hide = false
-): Hideable<InlineKeyboardButton.GameButton> {
-  return { text, callback_game: {}, hide }
+  hide = false,
+  extra?: Pick<InlineKeyboardButton.Game, 'style' | 'icon_custom_emoji_id'>,
+): Hideable<InlineKeyboardButton.Game> {
+  return { text, callback_game: {}, hide, ...extra }
 }
 
 export function pay(
   text: string,
-  hide = false
-): Hideable<InlineKeyboardButton.PayButton> {
-  return { text, pay: true, hide }
+  hide = false,
+  extra?: Pick<InlineKeyboardButton.Pay, 'style' | 'icon_custom_emoji_id'>,
+): Hideable<InlineKeyboardButton.Pay> {
+  return { text, pay: true, hide, ...extra }
 }
 
 export function login(
@@ -159,24 +167,28 @@ export function login(
     bot_username?: string
     request_write_access?: boolean
   } = {},
-  hide = false
-): Hideable<InlineKeyboardButton.LoginButton> {
+  hide = false,
+  extra?: Pick<InlineKeyboardButton.Login, 'style' | 'icon_custom_emoji_id'>,
+): Hideable<InlineKeyboardButton.Login> {
   return {
     text,
-    login_url: { ...opts, url },
     hide,
+    login_url: { ...opts, url },
+    ...extra
   }
 }
 
+// works as both InlineKeyboardButton and KeyboardButton
 export function webApp(
   text: string,
   url: string,
-  hide = false
-  // works as both InlineKeyboardButton and KeyboardButton
-): Hideable<InlineKeyboardButton.WebAppButton> {
+  hide = false,
+  extra?: Pick<InlineKeyboardButton.WebApp, 'style' | 'icon_custom_emoji_id'>,
+): Hideable<InlineKeyboardButton.WebApp> {
   return {
     text,
-    web_app: { url },
     hide,
+    web_app: { url },
+    ...extra
   }
 }

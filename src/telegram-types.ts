@@ -159,14 +159,14 @@ export type UpdateType = Exclude<UnionKeys<Update>, keyof Update>
 export type MessageSubType =
   | 'forward_date'
   | Exclude<
-      UnionKeys<Message>,
-      keyof Message.CaptionableMessage | 'entities' | 'media_group_id'
-    >
+    UnionKeys<Message>,
+    keyof Message.CaptionableMessage | 'entities' | 'media_group_id'
+  >
 
 type ExtractPartial<T extends object, U extends object> = T extends unknown
   ? Required<T> extends U
-    ? T
-    : never
+  ? T
+  : never
   : never
 
 /**

@@ -12,9 +12,11 @@ export type Reaction =
 type ReactionCtx = { update: Partial<tg.Update.MessageReactionUpdate> }
 
 const inspectReaction = (reaction: tg.ReactionType) => {
+  if (reaction.type === 'emoji')
+    return reaction.emoji
   if (reaction.type === 'custom_emoji')
     return `Custom(${reaction.custom_emoji_id})`
-  else return reaction.emoji
+  else return 'paid()'
 }
 
 export class ReactionList {
