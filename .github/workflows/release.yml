@@ -32,6 +32,9 @@ jobs:
 
       - run: npm run build:docs
 
+      - name: Add CNAME
+        run: echo "tgify.iatnaod.space" > docs/build/CNAME
+
       - name: Make GitHub links absolute
         shell: bash
         run: |
