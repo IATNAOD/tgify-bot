@@ -107,10 +107,7 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   get messageReactionCount() {
-    return this.update.message_reaction_count as PropOr<
-      U,
-      'message_reaction_count'
-    >
+    return this.update.message_reaction_count as PropOr<U, 'message_reaction_count'>
   }
 
   get callbackQuery() {
@@ -137,6 +134,22 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
     return this.update.chat_join_request as PropOr<U, 'chat_join_request'>
   }
 
+  get businessСonnection() {
+    return this.update.business_connection as PropOr<U, 'business_connection'>
+  }
+
+  get businessMessage() {
+    return this.update.business_message as PropOr<U, 'business_message'>
+  }
+
+  get editedBusinessMessage() {
+    return this.update.edited_business_message as PropOr<U, 'edited_business_message'>
+  }
+
+  get deletedBusinessMessages() {
+    return this.update.deleted_business_messages as PropOr<U, 'deleted_business_messages'>
+  }
+
   get chatBoost() {
     return this.update.chat_boost as PropOr<U, 'chat_boost'>
   }
@@ -146,8 +159,8 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   /** Shorthand for any `message` object present in the current update. One of
-   * `message`, `edited_message`, `channel_post`, `edited_channel_post` or
-   * `callback_query.message`
+   * `message`, `edited_message`, `business_message`, `edited_business_message`
+     `deleted_business_messages`, `channel_post`, `edited_channel_post` or * `callback_query.message`
    */
   get msg() {
     return getMessageFromAnySource(this) as GetMsg<U> & Msg
@@ -1609,6 +1622,12 @@ type GetMsg<U extends tg.Update> = U extends tg.Update.MessageUpdate
   ? U['edited_channel_post']
   : U extends tg.Update.EditedMessageUpdate
   ? U['edited_message']
+  : U extends tg.Update.BusinessMessageUpdate
+  ? U['business_message']
+  : U extends tg.Update.EditedBusinessMessageUpdate
+  ? U['edited_business_message']
+  : U extends tg.Update.DeletedBusinessMessagesUpdate
+  ? U['deleted_business_messages']
   : U extends tg.Update.CallbackQueryUpdate
   ? U['callback_query']['message']
   : undefined
@@ -1617,6 +1636,9 @@ function getMessageFromAnySource<U extends tg.Update>(ctx: Context<U>) {
   const msg =
     ctx.message ??
     ctx.editedMessage ??
+    ctx.businessMessage ??
+    ctx.editedBusinessMessage ??
+    ctx.deletedBusinessMessages ??
     ctx.callbackQuery?.message ??
     ctx.channelPost ??
     ctx.editedChannelPost
