@@ -1,7 +1,7 @@
 <header>
 
 <div align="center">
-<h1 align="center">tgify</h1>
+<h1 align="center">@tgify/bot</h1>
 
 <p>Modern Telegram Bot API framework for Node.js</p>
 
@@ -10,11 +10,11 @@
 <a href="https://core.telegram.org/bots/api">
 	<img src="https://img.shields.io/badge/Bot%20API-v8.3-f36caf.svg?style=flat-square" alt="Bot API Version" />
 </a>
-<a href="https://packagephobia.com/result?p=@tgify/tgify,node-telegram-bot-api">
-	<img src="https://flat.badgen.net/packagephobia/install/@tgify/tgify" alt="install size" />
+<a href="https://packagephobia.com/result?p=@tgify/bot,node-telegram-bot-api">
+	<img src="https://flat.badgen.net/packagephobia/install/@tgify/bot" alt="install size" />
 </a>
-<a href="https://github.com/IATNAOD/tgify">
-	<img src="https://img.shields.io/github/languages/top/IATNAOD/tgify?style=flat-square&logo=github" alt="GitHub top language" />
+<a href="https://github.com/IATNAOD/tgify-bot">
+	<img src="https://img.shields.io/github/languages/top/IATNAOD/tgify-bot?style=flat-square&logo=github" alt="GitHub top language" />
 </a>
 </div>
 
@@ -30,15 +30,16 @@ Tgify is a library that makes it simple for you to develop your own Telegram bot
 
 ### Release-notes
 
-- Version [1.2.0](https://github.com/IATNAOD/tgify/tree/main/release-notes/1.2.0.md) from 21.02.26
-- Version [1.1.0](https://github.com/IATNAOD/tgify/tree/main/release-notes/1.1.0.md) from 21.02.26
-- Version [1.0.0](https://github.com/IATNAOD/tgify/tree/main/release-notes/1.0.0.md) from 18.02.26
+- Version [1.3.0](https://github.com/IATNAOD/tgify-bot/tree/main/release-notes/1.3.0.md) from 23.02.26
+- Version [1.2.0](https://github.com/IATNAOD/tgify-bot/tree/main/release-notes/1.2.0.md) from 21.02.26
+- Version [1.1.0](https://github.com/IATNAOD/tgify-bot/tree/main/release-notes/1.1.0.md) from 21.02.26
+- Version [1.0.0](https://github.com/IATNAOD/tgify-bot/tree/main/release-notes/1.0.0.md) from 18.02.26
 
 ### Features
 
 - Full [Telegram Bot API 8.3](https://core.telegram.org/bots/api) support
-- [Excellent TypeScript typings](https://github.com/IATNAOD/tgify/releases/tag/v4.0.0)
-- [Lightweight](https://packagephobia.com/result?p=@tgify/tgify,node-telegram-bot-api)
+- [Excellent TypeScript typings](https://github.com/IATNAOD/tgify-bot/releases/tag/v1.0.0)
+- [Lightweight](https://packagephobia.com/result?p=@tgify/bot,node-telegram-bot-api)
 - [AWS **λ**](https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-handler.html)
   / [Firebase](https://firebase.google.com/products/functions/)
   / [Glitch](https://glitch.com/edit/#!/dashing-light)
@@ -50,8 +51,8 @@ Tgify is a library that makes it simple for you to develop your own Telegram bot
 ### Example
 
 ```js
-const { Tgify } = require('@tgify/tgify')
-const { message } = require('@tgify/tgify/filters')
+const { Tgify } = require('@tgify/bot')
+const { message } = require('@tgify/bot/filters')
 
 const bot = new Tgify(process.env.BOT_TOKEN)
 bot.start((ctx) => ctx.reply('Welcome'))
@@ -68,7 +69,7 @@ process.once('SIGTERM', () => bot.stop('SIGTERM'))
 The `Telegraf` class can also be used, it will replicate all the basic functionality:
 
 ```js
-const { Telegraf } = require('@tgify/tgify')
+const { Telegraf } = require('@tgify/bot')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 bot.command('oldschool', (ctx) => ctx.reply('Hello'))
@@ -85,8 +86,8 @@ For additional bot examples see the new [`docs repo`](https://github.com/feather
 ### Resources
 
 - [Getting started](#getting-started)
-- [GitHub Discussions](https://github.com/IATNAOD/tgify/discussions)
-- [Dependent repositories](https://libraries.io/npm/@tgify/tgify/dependent_repositories)
+- [GitHub Discussions](https://github.com/IATNAOD/tgify-bot/discussions)
+- [Dependent repositories](https://libraries.io/npm/@tgify/bot/dependent_repositories)
 
 ## Getting started
 
@@ -101,19 +102,19 @@ BotFather will give you a _token_, something like `123456789:AbCdefGhIJKlmNoPQRs
 ### Installation
 
 ```shellscript
-$ npm install @tgify/tgify
+$ npm install @tgify/bot
 ```
 
 or
 
 ```shellscript
-$ yarn add @tgify/tgify
+$ yarn add @tgify/bot
 ```
 
 or
 
 ```shellscript
-$ pnpm add @tgify/tgify
+$ pnpm add @tgify/bot
 ```
 
 ### `Tgify` class
@@ -134,8 +135,8 @@ This is probably the class you'll be using the most.
 #### Shorthand methods
 
 ```js
-import { Tgify } from '@tgify/tgify'
-import { message } from '@tgify/tgify/filters'
+import { Tgify } from '@tgify/bot'
+import { message } from '@tgify/bot/filters'
 
 const bot = new Tgify(process.env.BOT_TOKEN)
 
@@ -184,8 +185,8 @@ process.once('SIGTERM', () => bot.stop('SIGTERM'))
 ### Webhooks
 
 ```TS
-import { Tgify } from "@tgify/tgify";
-import { message } from '@tgify/tgify/filters';
+import { Tgify } from "@tgify/bot";
+import { message } from '@tgify/bot/filters';
 
 const bot = new Tgify(token);
 
@@ -295,8 +296,8 @@ As in Koa and some other middleware-based libraries,
 `await next()` will call next middleware and wait for it to finish:
 
 ```TS
-import { Tgify } from '@tgify/tgify';
-import { message } from '@tgify/tgify/filters';
+import { Tgify } from '@tgify/bot';
+import { message } from '@tgify/bot/filters';
 
 const bot = new Tgify(process.env.BOT_TOKEN);
 
@@ -345,7 +346,7 @@ Consequently, you can change the type of `ctx` to fit your needs in order for yo
 This is done through Generics:
 
 ```ts
-import { Context, Tgify } from '@tgify/tgify'
+import { Context, Tgify } from '@tgify/bot'
 
 // Define your own context type
 interface MyContext extends Context {

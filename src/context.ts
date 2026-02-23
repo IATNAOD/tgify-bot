@@ -347,6 +347,14 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   /**
+   * A method to get the current Telegram Stars balance of the bot. Requires no parameters. On success, returns a StarAmount object.
+   * @see https://core.telegram.org/bots/api#getmystarbalance
+   */
+  getMyStarBalance() {
+    return this.telegram.getMyStarBalance()
+  }
+
+  /**
    * @see https://core.telegram.org/bots/api#getstartransactions
    */
   getStarTransactions(offset?: number, limit?: number,) {
@@ -466,6 +474,19 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
       this.inlineMessageId,
       markup
     )
+  }
+
+  /**
+ * Use this method to edit a checklist on behalf of a connected business account. On success, the edited Message is returned.
+ * @param businessConnectionId Unique identifier of the business connection on behalf of which the message will be sent
+ * @param messageId Unique identifier for the target message
+ * @param checklist A JSON-serialized object for the checklist to send
+ * @param extra.reply_markup A JSON-serialized object for the new inline keyboard for the message
+ * @see https://core.telegram.org/bots/api#editmessagechecklist
+ */
+  editMessageChecklist(businessConnectionId: string, messageId: number, checklist: tg.InputChecklist, extra?: tt.ExtraEditMessageChecklist) {
+    this.assert(this.chat, 'editMessageChecklist')
+    return this.telegram.editMessageChecklist(businessConnectionId, this.chat?.id, messageId, checklist, extra)
   }
 
   /**
@@ -946,6 +967,24 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   /**
+   * Use this method to send a checklist on behalf of a connected business account. On success, the sent Message is returned.
+   * @param businessConnectionId Unique identifier of the business connection on behalf of which the message will be sent
+   * @param checklist A JSON-serialized object for the checklist to send
+   * @param extra.disable_notification Sends the message silently. Users will receive a notification with no sound.
+   * @param extra.protect_content Protects the contents of the sent message from forwarding and saving
+   * @param extra.message_effect_id Unique identifier of the message effect to be added to the message
+   * @param extra.reply_parameters A JSON-serialized object for description of the message to reply to
+   * @param extra.reply_markup A JSON-serialized object for an inline keyboard
+   * @see https://core.telegram.org/bots/api#sendchecklist
+   */
+  sendChecklist(businessConnectionId: string, checklist: tg.InputChecklist, extra?: tt.ExtraSendChecklist) {
+    this.assert(this.chat, 'sendChecklist')
+    return this.telegram.sendChecklist(businessConnectionId, this.chat.id, checklist, {
+      ...extra,
+    })
+  }
+
+  /**
    * @see https://core.telegram.org/bots/api#sendpoll
    */
   sendQuiz(quiz: string, options: readonly tg.InputPollOption[], extra?: tt.ExtraPoll) {
@@ -969,6 +1008,28 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   stopPoll(...args: Shorthand<'stopPoll'>) {
     this.assert(this.chat, 'stopPoll')
     return this.telegram.stopPoll(this.chat.id, ...args)
+  }
+
+  /**
+   * Use this method to approve a suggested post in a direct messages chat. The bot must have the 'can_post_messages' administrator right in the corresponding channel chat. Returns True on success.
+   * @param messageId Identifier of a suggested post message to approve
+   * @param extra.sendDate Point in time (Unix timestamp) when the post is expected to be published; omit if the date has already been specified when the suggested post was created. If specified, then the date must be not more than 2678400 seconds (30 days) in the future
+   * @see https://core.telegram.org/bots/api#approvesuggestedpost
+   */
+  approveSuggestedPost(messageId: number, extra?: tt.ExtraApproveSuggestedPost) {
+    this.assert(this.chat, 'approveSuggestedPost')
+    return this.telegram.approveSuggestedPost(this.chat.id, messageId, extra)
+  }
+
+  /**
+ * Use this method to decline a suggested post in a direct messages chat. The bot must have the 'can_manage_direct_messages' administrator right in the corresponding channel chat. Returns True on success.
+ * @param messageId Identifier of a suggested post message to approve
+ * @param extra.comment Comment for the creator of the suggested post; 0-128 characters
+ * @see https://core.telegram.org/bots/api#declinesuggestedpost
+ */
+  declineSuggestedPost(messageId: number, extra?: tt.ExtraDeclineSuggestedPost) {
+    this.assert(this.chat, 'declineSuggestedPost')
+    return this.telegram.declineSuggestedPost(this.chat.id, messageId, extra)
   }
 
   /**
@@ -1066,11 +1127,27 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   /**
+   * Use this method to get a list of profile pictures for a user. Returns a UserProfilePhotos object.
+   * @param userId Unique identifier of the target user
+   * @param offset Sequential number of the first photo to be returned. By default, all photos are returned.
+   * @param limit Limits the number of photos to be retrieved. Values between 1-100 are accepted. Defaults to 100.
    * @see https://core.telegram.org/bots/api#getuserprofilephotos
    */
   getUserProfilePhotos(offset?: number, limit?: number) {
     this.assert(this.from, 'getUserProfilePhotos')
     return this.telegram.getUserProfilePhotos(this.from.id, offset, limit)
+  }
+
+  /**
+   * Use this method to get a list of profile audios for a user. Returns a UserProfileAudios object.
+   * @param userId Unique identifier of the target user
+   * @param extra.offset Sequential number of the first audio to be returned. By default, all audios are returned.
+   * @param extra.limit Limits the number of audios to be retrieved. Values between 1-100 are accepted. Defaults to 100.
+   * @see https://core.telegram.org/bots/api#getuserprofileaudios
+   */
+  getUserProfileAudios(extra?: tt.ExtraGetUserProfileAudios) {
+    this.assert(this.from, 'getUserProfileAudios')
+    return this.telegram.getUserProfileAudios(this.from.id, extra)
   }
 
   /**
@@ -1508,6 +1585,25 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   /**
+   * Use this method to stream a partial message to a user while the message is being generated; supported only for bots with forum topic mode enabled. Returns True on success.
+   * @param chatId Unique identifier for the target private chat
+   * @param draftId Unique identifier of the message draft; must be non-zero. Changes of drafts with the same identifier are animated
+   * @param text Text of the message to be sent, 1-4096 characters after entities parsing
+   * @param extra.message_thread_id Unique identifier for the target message thread
+   * @param extra.parse_mode Mode for parsing entities in the message text. See formatting options for more details.
+   * @param extra.entities A JSON-serialized list of special entities that appear in message text, which can be specified instead of parse_mode
+   * @see https://core.telegram.org/bots/api#sendmessagedraft
+   */
+  sendMessageDraft(
+    draftId: number,
+    text: string,
+    extra?: tt.ExtraSendMessageDraft
+  ) {
+    this.assert(this.chat, 'sendMessageDraft')
+    return this.telegram.sendMessageDraft(this.chat.id, draftId, text, extra)
+  }
+
+  /**
    * @see https://core.telegram.org/bots/api#copymessage
    */
   copyMessage(chatId: string | number, extra?: tt.ExtraCopyMessage) {
@@ -1606,6 +1702,14 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   /**
+   * Sends a gift to the given user or channel chat. The gift can't be converted to Telegram Stars by the receiver. Returns True on success.
+   * @param giftId Identifier of the gift; limited gifts can't be sent to channel chats
+   * @param extra.user_id Required if user_id is not specified. Unique identifier for the chat or username of the channel (in the format @channelusername) that will receive the gift.
+   * @param extra.chat_id Required if user_id is not specified. Unique identifier for the chat or username of the channel (in the format @channelusername) that will receive the gift.
+   * @param extra.pay_for_upgrade Pass True to pay for the gift upgrade from the bot's balance, thereby making the upgrade free for the receiver
+   * @param extra.text Text that will be shown along with the gift; 0-128 characters
+   * @param extra.text_parse_mode Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+   * @param extra.text_entities A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
    * @see https://core.telegram.org/bots/api#sendgift
    */
   sendGift(giftId: string, extra?: tt.ExtraSendGift) {
@@ -1617,6 +1721,21 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
           : {}),
       ...extra
     })
+  }
+
+  /**
+ * Gifts a Telegram Premium subscription to the given user. Returns True on success.
+ * @param userId Unique identifier of the target user who will receive a Telegram Premium subscription
+ * @param starCount Number of months the Telegram Premium subscription will be active for the user; must be one of 3, 6, or 12
+ * @param monthCount Number of Telegram Stars to pay for the Telegram Premium subscription; must be 1000 for 3 months, 1500 for 6 months, and 2500 for 12 months
+ * @param extra.text Text that will be shown along with the service message about the subscription; 0-128 characters
+ * @param extra.text_parse_mode Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+ * @param extra.text_entities A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+ * @see https://core.telegram.org/bots/api#giftpremiumsubscription
+ */
+  giftPremiumSubscription(starCount: 1000 | 1500 | 2500, monthCount: 3 | 6 | 12, extra?: tt.ExtraGiftPremiumSubscription) {
+    this.assert(this.from, 'sendGift')
+    return this.telegram.giftPremiumSubscription(this.from.id, starCount, monthCount, extra)
   }
 
   /**

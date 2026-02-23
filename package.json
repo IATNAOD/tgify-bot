@@ -1,16 +1,16 @@
 {
-  "name": "@tgify/tgify",
+  "name": "@tgify/bot",
   "version": "1.2.0",
-  "description": "Modern Telegram Bot Framework",
+  "description": "A powerful and convenient Telegram Bot API framework",
   "license": "MIT",
   "author": "IATNAOD",
   "homepage": "https://tgify.iatnaod.space",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/IATNAOD/tgify.git"
+    "url": "git+ssh://git@github.com/IATNAOD/tgify-bot.git"
   },
   "bugs": {
-    "url": "https://github.com/IATNAOD/tgify/issues"
+    "url": "https://github.com/IATNAOD/tgify-bot/issues"
   },
   "main": "lib/index.js",
   "exports": {

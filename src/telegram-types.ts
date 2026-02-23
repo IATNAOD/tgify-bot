@@ -122,11 +122,14 @@ export type ExtraBanChatMember = MakeExtra<
   'user_id' | 'until_date'
 >
 export type ExtraKickChatMember = ExtraBanChatMember
+export type ExtraGetUserProfileAudios = MakeExtra<'getUserProfileAudios', 'user_id'>
 export type ExtraSetUserEmojiStatus = MakeExtra<'setUserEmojiStatus', 'user_id'>
 export type ExtraLocation = MakeExtra<'sendLocation', 'latitude' | 'longitude'>
 export type ExtraMediaGroup = MakeExtra<'sendMediaGroup', 'media'>
 export type ExtraPhoto = MakeExtra<'sendPhoto', 'photo'>
 export type ExtraPoll = MakeExtra<'sendPoll', 'question' | 'options' | 'type'>
+export type ExtraSendChecklist = MakeExtra<'sendChecklist', 'checklist'>
+export type ExtraEditMessageChecklist = MakeExtra<'editMessageChecklist', 'business_connection_id' | 'message_id' | 'checklist'>
 export type ExtraPromoteChatMember = MakeExtra<'promoteChatMember', 'user_id'>
 export type ExtraReplyMessage = MakeExtra<'sendMessage', 'text'>
 export type ExtraForwardMessage = MakeExtra<
@@ -137,12 +140,18 @@ export type ExtraForwardMessages = MakeExtra<
   'forwardMessages',
   'from_chat_id' | 'message_ids'
 >
+export type ExtraSendMessageDraft = MakeExtra<
+  'sendMessageDraft',
+  'draft_id' | 'text'
+>
 export type ExtraSendChatAction = MakeExtra<'sendChatAction', 'action'>
 export type ExtraRestrictChatMember = MakeExtra<'restrictChatMember', 'user_id'>
 export type ExtraSetMyCommands = MakeExtra<'setMyCommands', 'commands'>
 export type ExtraSetWebhook = MakeExtra<'setWebhook', 'url'>
 export type ExtraSticker = MakeExtra<'sendSticker', 'sticker'>
 export type ExtraStopPoll = MakeExtra<'stopPoll', 'message_id'>
+export type ExtraApproveSuggestedPost = MakeExtra<'approveSuggestedPost'>
+export type ExtraDeclineSuggestedPost = MakeExtra<'declineSuggestedPost'>
 export type ExtraVenue = MakeExtra<
   'sendVenue',
   'latitude' | 'longitude' | 'title' | 'address'
@@ -164,12 +173,47 @@ export type ExtraSendGift = MakeExtra<
   'sendGift',
   'gift_id'
 >
+export type ExtraGiftPremiumSubscription = MakeExtra<
+  'giftPremiumSubscription',
+  'user_id' | 'star_count' | 'month_count'
+>
 export type ExtraVerifyUser = MakeExtra<
   'verifyUser',
   'user_id'
 >
 export type ExtraVerifyChat = MakeExtra<
   'verifyChat'
+>
+export type ExtraGetBusinessAccountGifts = MakeExtra<
+  'getBusinessAccountGifts',
+  'business_connection_id'
+>
+export type ExtraGetUserGifts = MakeExtra<
+  'getUserGifts',
+  'user_id'
+>
+export type ExtraGetChatGifts = MakeExtra<
+  'getChatGifts'
+>
+export type ExtraUpgradeGift = MakeExtra<
+  'upgradeGift',
+  'business_connection_id' | 'owned_gift_id'
+>
+export type ExtraTransferGift = MakeExtra<
+  'transferGift',
+  'business_connection_id' | 'owned_gift_id' | 'new_owner_chat_id'
+>
+export type ExtraPostStory = MakeExtra<
+  'postStory',
+  'business_connection_id' | 'content' | 'active_period'
+>
+export type ExtraRepostStory = MakeExtra<
+  'repostStory',
+  'business_connection_id' | 'from_chat_id' | 'from_story_id' | 'active_period'
+>
+export type ExtraEditStory = MakeExtra<
+  'editStory',
+  'business_connection_id' | 'story_id' | 'content'
 >
 
 export type MediaGroup =

@@ -6,7 +6,7 @@ about: Create a report to help us improve
 <!--
 Before you start writing:
 1. Search for similar issues,
-2. Check if the issue wasn't already fixed: `npm install --no-save @iatnaod/tgify`
+2. Check if the issue wasn't already fixed: `npm install --no-save @tgify/bot`
 
 Feel free to remove any section not applicable to your issue,
 but keep in mind that failing to provide relevant information

@@ -180,6 +180,25 @@ export class Telegram extends ApiClient {
   }
 
   /**
+   * Use this method to stream a partial message to a user while the message is being generated; supported only for bots with forum topic mode enabled. Returns True on success.
+   * @param chatId Unique identifier for the target private chat
+   * @param draftId Unique identifier of the message draft; must be non-zero. Changes of drafts with the same identifier are animated
+   * @param text Text of the message to be sent, 1-4096 characters after entities parsing
+   * @param extra.message_thread_id Unique identifier for the target message thread
+   * @param extra.parse_mode Mode for parsing entities in the message text. See formatting options for more details.
+   * @param extra.entities A JSON-serialized list of special entities that appear in message text, which can be specified instead of parse_mode
+   * @see https://core.telegram.org/bots/api#sendmessagedraft
+   */
+  sendMessageDraft(chatId: number, draftId: number, text: string, extra?: tt.ExtraSendMessageDraft) {
+    return this.callApi('sendMessageDraft', {
+      text,
+      chat_id: chatId,
+      draft_id: draftId,
+      ...extra
+    })
+  }
+
+  /**
    * Use this method when you need to tell the user that something is happening on the bot's side.
    * The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status).
    * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
@@ -192,7 +211,7 @@ export class Telegram extends ApiClient {
     return this.callApi('sendChatAction', { chat_id, action, ...extra })
   }
 
-  /**
+  /** 
    * Use this method to change the chosen reactions on a message. Service messages can't be reacted to.
    * Automatically forwarded messages from a channel to its discussion group have the same available
    * reactions as messages in the channel. In albums, bots must react to the first message.
@@ -223,6 +242,7 @@ export class Telegram extends ApiClient {
    * @param userId Unique identifier of the target user
    * @param offset Sequential number of the first photo to be returned. By default, all photos are returned.
    * @param limit Limits the number of photos to be retrieved. Values between 1-100 are accepted. Defaults to 100.
+   * @see https://core.telegram.org/bots/api#getuserprofilephotos
    */
   getUserProfilePhotos(userId: number, offset?: number, limit?: number) {
     return this.callApi('getUserProfilePhotos', {
@@ -230,6 +250,17 @@ export class Telegram extends ApiClient {
       offset,
       limit,
     })
+  }
+
+  /**
+   * Use this method to get a list of profile audios for a user. Returns a UserProfileAudios object.
+   * @param userId Unique identifier of the target user
+   * @param extra.offset Sequential number of the first audio to be returned. By default, all audios are returned.
+   * @param extra.limit Limits the number of audios to be retrieved. Values between 1-100 are accepted. Defaults to 100.
+   * @see https://core.telegram.org/bots/api#getuserprofileaudios
+   */
+  getUserProfileAudios(userId: number, extra?: tt.ExtraGetUserProfileAudios) {
+    return this.callApi('getUserProfileAudios', { user_id: userId, ...extra })
   }
 
   /**
@@ -508,6 +539,27 @@ export class Telegram extends ApiClient {
   }
 
   /**
+   * Use this method to send a checklist on behalf of a connected business account. On success, the sent Message is returned.
+   * @param businessConnectionId Unique identifier of the business connection on behalf of which the message will be sent
+   * @param chatId Unique identifier for the target chat
+   * @param checklist A JSON-serialized object for the checklist to send
+   * @param extra.disable_notification Sends the message silently. Users will receive a notification with no sound.
+   * @param extra.protect_content Protects the contents of the sent message from forwarding and saving
+   * @param extra.message_effect_id Unique identifier of the message effect to be added to the message
+   * @param extra.reply_parameters A JSON-serialized object for description of the message to reply to
+   * @param extra.reply_markup A JSON-serialized object for an inline keyboard
+   * @see https://core.telegram.org/bots/api#sendchecklist
+   */
+  sendChecklist(businessConnectionId: string, chatId: number, checklist: tg.InputChecklist, extra?: tt.ExtraSendChecklist) {
+    return this.callApi('sendChecklist', {
+      checklist,
+      chat_id: chatId,
+      business_connection_id: businessConnectionId,
+      ...extra
+    })
+  }
+
+  /**
    * Send a native quiz.
    * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
    * @param question Poll question, 1-255 characters
@@ -541,6 +593,36 @@ export class Telegram extends ApiClient {
       chat_id: chatId,
       message_id: messageId,
       ...extra,
+    })
+  }
+
+  /**
+   * Use this method to approve a suggested post in a direct messages chat. The bot must have the 'can_post_messages' administrator right in the corresponding channel chat. Returns True on success.
+   * @param chatId Unique identifier for the target direct messages chat
+   * @param messageId Identifier of a suggested post message to approve
+   * @param extra.sendDate Point in time (Unix timestamp) when the post is expected to be published; omit if the date has already been specified when the suggested post was created. If specified, then the date must be not more than 2678400 seconds (30 days) in the future
+   * @see https://core.telegram.org/bots/api#approvesuggestedpost
+   */
+  approveSuggestedPost(chatId: number, messageId: number, extra?: tt.ExtraApproveSuggestedPost) {
+    return this.callApi('approveSuggestedPost', {
+      chat_id: chatId,
+      message_id: messageId,
+      ...extra
+    })
+  }
+
+  /**
+   * Use this method to decline a suggested post in a direct messages chat. The bot must have the 'can_manage_direct_messages' administrator right in the corresponding channel chat. Returns True on success.
+   * @param chatId Unique identifier for the target direct messages chat
+   * @param messageId Identifier of a suggested post message to approve
+   * @param extra.comment Comment for the creator of the suggested post; 0-128 characters
+   * @see https://core.telegram.org/bots/api#declinesuggestedpost
+   */
+  declineSuggestedPost(chatId: number, messageId: number, extra?: tt.ExtraDeclineSuggestedPost) {
+    return this.callApi('declineSuggestedPost', {
+      chat_id: chatId,
+      message_id: messageId,
+      ...extra
     })
   }
 
@@ -946,6 +1028,14 @@ export class Telegram extends ApiClient {
   }
 
   /**
+   * A method to get the current Telegram Stars balance of the bot. Requires no parameters. On success, returns a StarAmount object.
+   * @see https://core.telegram.org/bots/api#getmystarbalance
+   */
+  getMyStarBalance() {
+    return this.callApi('getMyStarBalance', {})
+  }
+
+  /**
    * Returns the bot's Telegram Star transactions in chronological order. On success, returns a StarTransactions object.
    * @param offset  Number of transactions to skip in the response
    * @param limit The maximum number of transactions to be retrieved. Values between 1-100 are accepted. Defaults to 100
@@ -1126,6 +1216,25 @@ export class Telegram extends ApiClient {
   }
 
   /**
+ * Use this method to edit a checklist on behalf of a connected business account. On success, the edited Message is returned.
+ * @param businessConnectionId Unique identifier of the business connection on behalf of which the message will be sent
+ * @param chatId Unique identifier for the target chat
+ * @param messageId Unique identifier for the target message
+ * @param checklist A JSON-serialized object for the checklist to send
+ * @param extra.reply_markup A JSON-serialized object for the new inline keyboard for the message
+ * @see https://core.telegram.org/bots/api#editmessagechecklist
+ */
+  editMessageChecklist(businessConnectionId: string, chatId: number, messageId: number, checklist: tg.InputChecklist, extra?: tt.ExtraEditMessageChecklist) {
+    return this.callApi('editMessageChecklist', {
+      checklist,
+      chat_id: chatId,
+      message_id: messageId,
+      business_connection_id: businessConnectionId,
+      ...extra
+    })
+  }
+
+  /**
    * Delete a message, including service messages, with the following limitations:
    * - A message can only be deleted if it was sent less than 48 hours ago.
    * - Bots can delete outgoing messages in groups and supergroups.
@@ -1176,13 +1285,12 @@ export class Telegram extends ApiClient {
   }
 
   /**
-   * Use this method to create a topic in a forum supergroup chat. The bot must be an administrator in the chat for this
-   * to work and must have the can_manage_topics administrator rights. Returns information about the created topic as a
-   * ForumTopic object.
-   *
+   * Use this method to create a topic in a forum supergroup chat or a private chat with a user. In the case of a supergroup chat the bot must be an administrator
+   * in the chat for this to work and must have the can_manage_topics administrator right. Returns information about the created topic as a ForumTopic object.
    * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
    * @param name Topic name, 1-128 characters
-   *
+   * @param extra.icon_color Color of the topic icon in RGB format. Currently, must be one of 7322096 (0x6FB9F0), 16766590 (0xFFD67E), 13338331 (0xCB86DB), 9367192 (0x8EEE98), 16749490 (0xFF93B2), or 16478047 (0xFB6F5F)
+   * @param extra.icon_custom_emoji_id Unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all allowed custom emoji identifiers.
    * @see https://core.telegram.org/bots/api#createforumtopic
    */
   createForumTopic(
@@ -1708,6 +1816,25 @@ export class Telegram extends ApiClient {
     })
   }
 
+
+  /**
+   * Changes the profile photo of the bot. Returns True on success.
+   * @param photo The new profile photo to set
+   * @see https://core.telegram.org/bots/api#setmyprofilephoto
+   */
+  setMyProfilePhoto(photo: tg.InputProfilePhoto) {
+    return this.callApi('setMyProfilePhoto', { photo })
+  }
+
+
+  /**
+   * Removes the profile photo of the bot. Requires no parameters. Returns True on success.
+   * @see https://core.telegram.org/bots/api#removemyprofilephoto
+   */
+  removeMyProfilePhoto() {
+    return this.callApi('removeMyProfilePhoto', {})
+  }
+
   /**
    * Use this method to change the bot's menu button in a private chat, or the default menu button. Returns true on success.
    * @param chatId Unique identifier for the target private chat. If not specified, default bot's menu button will be changed.
@@ -1781,9 +1908,29 @@ export class Telegram extends ApiClient {
    * @param extra.text Text that will be shown along with the gift; 0-128 characters
    * @param extra.text_parse_mode Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
    * @param extra.text_entities A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+   * @see https://core.telegram.org/bots/api#sendgift
    */
   sendGift(giftId: string, extra?: tt.ExtraSendGift) {
     return this.callApi('sendGift', { gift_id: giftId, ...extra })
+  }
+
+  /**
+   * Gifts a Telegram Premium subscription to the given user. Returns True on success.
+   * @param userId Unique identifier of the target user who will receive a Telegram Premium subscription
+   * @param starCount Number of months the Telegram Premium subscription will be active for the user; must be one of 3, 6, or 12
+   * @param monthCount Number of Telegram Stars to pay for the Telegram Premium subscription; must be 1000 for 3 months, 1500 for 6 months, and 2500 for 12 months
+   * @param extra.text Text that will be shown along with the service message about the subscription; 0-128 characters
+   * @param extra.text_parse_mode Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+   * @param extra.text_entities A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+   * @see https://core.telegram.org/bots/api#giftpremiumsubscription
+   */
+  giftPremiumSubscription(userId: number, starCount: 1000 | 1500 | 2500, monthCount: 3 | 6 | 12, extra?: tt.ExtraGiftPremiumSubscription) {
+    return this.callApi('giftPremiumSubscription', {
+      user_id: userId,
+      star_count: starCount,
+      month_count: monthCount,
+      ...extra
+    })
   }
 
   /**
@@ -1818,6 +1965,330 @@ export class Telegram extends ApiClient {
    */
   removeChatVerification(chatId: number | string) {
     return this.callApi('removeChatVerification', { chat_id: chatId })
+  }
+
+  /**
+   * Marks incoming message as read on behalf of a business account. Requires the can_read_messages business bot right. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection on behalf of which to read the message
+   * @param chatId Unique identifier of the chat in which the message was received. The chat must have been active in the last 24 hours.
+   * @param messageId Unique identifier of the message to mark as read
+   * @see https://core.telegram.org/bots/api#readbusinessmessage
+   */
+  readBusinessMessage(businessConnectionId: string, chatId: number, messageId: number) {
+    return this.callApi('readBusinessMessage', {
+      chat_id: chatId,
+      message_id: messageId,
+      business_connection_id: businessConnectionId,
+    })
+  }
+
+  /**
+   * Delete messages on behalf of a business account. Requires the can_delete_sent_messages business bot right to delete messages sent by the bot itself,
+   * or the can_delete_all_messages business bot right to delete any message. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection on behalf of which to read the message
+   * @param messageIds A JSON-serialized list of 1-100 identifiers of messages to delete. All messages must be from the same chat. See deleteMessage for limitations on which messages can be deleted
+   * @see https://core.telegram.org/bots/api#deletebusinessmessages
+   */
+  deleteBusinessMessages(businessConnectionId: string, messageIds: number[]) {
+    return this.callApi('deleteBusinessMessages', {
+      message_ids: messageIds,
+      business_connection_id: businessConnectionId,
+    })
+  }
+
+  /**
+   * Changes the first and last name of a managed business account. Requires the can_change_name business bot right. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param firstName The new value of the first name for the business account; 1-64 characters
+   * @param lastName The new value of the last name for the business account; 0-64 characters
+   * @see https://core.telegram.org/bots/api#setbusinessaccountname
+   */
+  setBusinessAccountName(businessConnectionId: string, firstName: string, lastName: string) {
+    return this.callApi('setBusinessAccountName', {
+      first_name: firstName,
+      last_name: lastName,
+      business_connection_id: businessConnectionId,
+    })
+  }
+
+  /**
+   * Changes the username of a managed business account. Requires the can_change_username business bot right. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param username The new value of the username for the business account; 0-32 characters
+   * @see https://core.telegram.org/bots/api#setbusinessaccountusername
+   */
+  setBusinessAccountUsername(businessConnectionId: string, username: string) {
+    return this.callApi('setBusinessAccountUsername', {
+      username,
+      business_connection_id: businessConnectionId,
+    })
+  }
+
+  /**
+   * Changes the bio of a managed business account. Requires the can_change_bio business bot right. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param bio The new value of the bio for the business account; 0-140 characters
+   * @see https://core.telegram.org/bots/api#setbusinessaccountbio
+   */
+  setBusinessAccountBio(businessConnectionId: string, bio?: string) {
+    return this.callApi('setBusinessAccountBio', {
+      bio,
+      business_connection_id: businessConnectionId,
+    })
+  }
+
+  /**
+   * Changes the profile photo of a managed business account. Requires the can_edit_profile_photo business bot right. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param photo The new profile photo to set
+   * @param isPublic Pass True to set the public photo, which will be visible even if the main photo is hidden by the business account's privacy settings. An account can have only one public photo.
+   * @see https://core.telegram.org/bots/api#setbusinessaccountprofilephoto
+   */
+  setBusinessAccountProfilePhoto(businessConnectionId: string, photo: tg.InputProfilePhoto, isPublic?: boolean) {
+    return this.callApi('setBusinessAccountProfilePhoto', {
+      photo,
+      is_public: isPublic,
+      business_connection_id: businessConnectionId,
+    })
+  }
+
+  /**
+   * Removes the current profile photo of a managed business account. Requires the can_edit_profile_photo business bot right. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param isPublic Pass True to remove the public photo, which is visible even if the main photo is hidden by the business account's privacy settings. After the main photo is removed, the previous profile photo (if present) becomes the main photo.
+   * @see https://core.telegram.org/bots/api#removebusinessaccountprofilephoto
+   */
+  removeBusinessAccountProfilePhoto(businessConnectionId: string, isPublic?: boolean) {
+    return this.callApi('removeBusinessAccountProfilePhoto', {
+      is_public: isPublic,
+      business_connection_id: businessConnectionId,
+    })
+  }
+
+  /**
+   * Changes the privacy settings pertaining to incoming gifts in a managed business account. Requires the can_change_gift_settings business bot right. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param showGiftButton Pass True, if a button for sending a gift to the user or by the business account must always be shown in the input field
+   * @param acceptedGiftTypes Types of gifts accepted by the business account
+   * @see https://core.telegram.org/bots/api#setbusinessaccountgiftsettings
+   */
+  setBusinessAccountGiftSettings(businessConnectionId: string, showGiftButton: boolean, acceptedGiftTypes: tg.AcceptedGiftTypes) {
+    return this.callApi('setBusinessAccountGiftSettings', {
+      show_gift_button: showGiftButton,
+      accepted_gift_types: acceptedGiftTypes,
+      business_connection_id: businessConnectionId,
+    })
+  }
+
+  /**
+   * Returns the amount of Telegram Stars owned by a managed business account. Requires the can_view_gifts_and_stars business bot right. Returns StarAmount on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @see https://core.telegram.org/bots/api#getbusinessaccountstarbalance
+   */
+  getBusinessAccountStarBalance(businessConnectionId: string) {
+    return this.callApi('getBusinessAccountStarBalance', {
+      business_connection_id: businessConnectionId,
+    })
+  }
+
+  /**
+   * Transfers Telegram Stars from the business account balance to the bot's balance. Requires the can_transfer_stars business bot right. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param starCount Number of Telegram Stars to transfer; 1-10000
+   * @see https://core.telegram.org/bots/api#transferbusinessaccountstars
+   */
+  transferBusinessAccountStars(businessConnectionId: string, starCount: number) {
+    return this.callApi('transferBusinessAccountStars', {
+      star_count: starCount,
+      business_connection_id: businessConnectionId,
+    })
+  }
+
+  /**
+   * Returns the gifts received and owned by a managed business account. Requires the can_view_gifts_and_stars business bot right. Returns OwnedGifts on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param extra.exclude_unsaved Pass True to exclude gifts that aren't saved to the account's profile page
+   * @param extra.exclude_saved Pass True to exclude gifts that are saved to the account's profile page
+   * @param extra.exclude_unlimited Pass True to exclude gifts that can be purchased an unlimited number of times
+   * @param extra.exclude_limited_upgradable Pass True to exclude gifts that can be purchased a limited number of times and can be upgraded to unique
+   * @param extra.exclude_limited_non_upgradable Pass True to exclude gifts that can be purchased a limited number of times and can't be upgraded to unique
+   * @param extra.exclude_unique Pass True to exclude unique gifts
+   * @param extra.exclude_from_blockchain Pass True to exclude gifts that were assigned from the TON blockchain and can't be resold or transferred in Telegram
+   * @param extra.sort_by_price Pass True to sort results by gift price instead of send date. Sorting is applied before pagination.
+   * @param extra.offset Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
+   * @param extra.limit The maximum number of gifts to be returned; 1-100. Defaults to 100
+   * @see https://core.telegram.org/bots/api#getbusinessaccountgifts
+   */
+  getBusinessAccountGifts(businessConnectionId: string, extra?: tt.ExtraGetBusinessAccountGifts) {
+    return this.callApi('getBusinessAccountGifts', {
+      business_connection_id: businessConnectionId,
+      ...extra
+    })
+  }
+
+  /**
+   * Returns the gifts owned and hosted by a user. Returns OwnedGifts on success.
+   * @param userId Unique identifier of the user
+   * @param extra.exclude_unlimited Pass True to exclude gifts that can be purchased an unlimited number of times
+   * @param extra.exclude_limited_upgradable Pass True to exclude gifts that can be purchased a limited number of times and can be upgraded to unique
+   * @param extra.exclude_limited_non_upgradable Pass True to exclude gifts that can be purchased a limited number of times and can't be upgraded to unique
+   * @param extra.exclude_from_blockchain Pass True to exclude gifts that were assigned from the TON blockchain and can't be resold or transferred in Telegram
+   * @param extra.exclude_unique Pass True to exclude unique gifts
+   * @param extra.sort_by_price Pass True to sort results by gift price instead of send date. Sorting is applied before pagination.
+   * @param extra.offset Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
+   * @param extra.limit The maximum number of gifts to be returned; 1-100. Defaults to 100
+   * @see https://core.telegram.org/bots/api#getusergifts
+   */
+  getUserGifts(userId: number, extra?: tt.ExtraGetUserGifts) {
+    return this.callApi('getUserGifts', {
+      user_id: userId,
+      ...extra
+    })
+  }
+
+  /**
+   * Returns the gifts owned by a chat. Returns OwnedGifts on success.
+   * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param extra.exclude_unsaved Pass True to exclude gifts that aren't saved to the account's profile page
+   * @param extra.exclude_saved Pass True to exclude gifts that are saved to the account's profile page
+   * @param extra.exclude_unlimited Pass True to exclude gifts that can be purchased an unlimited number of times
+   * @param extra.exclude_limited_upgradable Pass True to exclude gifts that can be purchased a limited number of times and can be upgraded to unique
+   * @param extra.exclude_limited_non_upgradable Pass True to exclude gifts that can be purchased a limited number of times and can't be upgraded to unique
+   * @param extra.exclude_from_blockchain Pass True to exclude gifts that were assigned from the TON blockchain and can't be resold or transferred in Telegram
+   * @param extra.exclude_unique Pass True to exclude unique gifts
+   * @param extra.sort_by_price Pass True to sort results by gift price instead of send date. Sorting is applied before pagination.
+   * @param extra.offset Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
+   * @param extra.limit The maximum number of gifts to be returned; 1-100. Defaults to 100
+   * @see https://core.telegram.org/bots/api#getchatgifts
+   */
+  getChatGifts(chatId: number | string, extra?: tt.ExtraGetChatGifts) {
+    return this.callApi('getChatGifts', {
+      chat_id: chatId,
+      ...extra
+    })
+  }
+
+  /**
+   * Converts a given regular gift to Telegram Stars. Requires the can_convert_gifts_to_stars business bot right. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param giftId Unique identifier of the regular gift that should be converted to Telegram Stars
+   * @see https://core.telegram.org/bots/api#convertgifttostars
+   */
+  convertGiftToStars(businessConnectionId: string, giftId: string) {
+    return this.callApi('convertGiftToStars', {
+      owned_gift_id: giftId,
+      business_connection_id: businessConnectionId,
+    })
+  }
+
+  /**
+   * Upgrades a given regular gift to a unique gift. Requires the can_transfer_and_upgrade_gifts business bot right. Additionally requires the can_transfer_stars business bot right if the upgrade is paid. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param giftId Unique identifier of the regular gift that should be upgraded to a unique one
+   * @param extra.keep_original_details Pass True to keep the original gift text, sender and receiver in the upgraded gift
+   * @param extra.star_count amount of Telegram Stars that will be paid for the upgrade from the business account balance. If gift.prepaid_upgrade_star_count > 0, then pass 0, otherwise, the can_transfer_stars business bot right is required and gift.upgrade_star_count must be passed.
+   * @see https://core.telegram.org/bots/api#upgradegift
+   */
+  upgradeGift(businessConnectionId: string, giftId: string, extra?: tt.ExtraUpgradeGift) {
+    return this.callApi('upgradeGift', {
+      owned_gift_id: giftId,
+      business_connection_id: businessConnectionId,
+      ...extra
+    })
+  }
+
+  /**
+   * Transfers an owned unique gift to another user. Requires the can_transfer_and_upgrade_gifts business bot right. Requires can_transfer_stars business bot right if the transfer is paid. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param giftId Unique identifier of the regular gift that should be transferred
+   * @param newOwnerChatid Unique identifier of the chat which will own the gift. The chat must be active in the last 24 hours.
+   * @param extra.star_count The amount of Telegram Stars that will be paid for the transfer from the business account balance. If positive, then the can_transfer_stars business bot right is required.
+   * @see https://core.telegram.org/bots/api#transfergift
+   */
+  transferGift(businessConnectionId: string, giftId: string, newOwnerChatid: number, extra?: tt.ExtraTransferGift) {
+    return this.callApi('transferGift', {
+      owned_gift_id: giftId,
+      new_owner_chat_id: newOwnerChatid,
+      business_connection_id: businessConnectionId,
+      ...extra
+    })
+  }
+
+  /**
+   * Posts a story on behalf of a managed business account. Requires the can_manage_stories business bot right. Returns Story on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param content Content of the story
+   * @param activePeriod Period after which the story is moved to the archive, in seconds; must be one of 6 * 3600, 12 * 3600, 86400, or 2 * 86400
+   * @param extra.caption Caption of the story, 0-2048 characters after entities parsing
+   * @param extra.parse_mode Mode for parsing entities in the story caption. See formatting options for more details.
+   * @param extra.caption_entities A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
+   * @param extra.areas A JSON-serialized list of clickable areas to be shown on the story
+   * @param extra.post_to_chat_page Pass True to keep the story accessible after it expires
+   * @param extra.protect_content Pass True if the content of the story must be protected from forwarding and screenshotting
+   * @see https://core.telegram.org/bots/api#poststory
+   */
+  postStory(businessConnectionId: string, content: tg.InputStoryContent, activePeriod: 21600 | 43200 | 86400 | 172800, extra?: tt.ExtraPostStory) {
+    return this.callApi('postStory', {
+      content,
+      active_period: activePeriod,
+      business_connection_id: businessConnectionId,
+      ...fmtCaption(extra),
+    })
+  }
+
+  /**
+   * Reposts a story on behalf of a business account from another business account. Both business accounts must be managed by the same bot,
+   * and the story on the source account must have been posted (or reposted) by the bot.
+   * Requires the can_manage_stories business bot right for both business accounts. Returns Story on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param fromChatId Unique identifier of the chat which posted the story that should be reposted
+   * @param fromStoryId Unique identifier of the story that should be reposted
+   * @param activePeriod Period after which the story is moved to the archive, in seconds; must be one of 6 * 3600, 12 * 3600, 86400, or 2 * 86400
+   * @param extra.post_to_chat_page Pass True to keep the story accessible after it expires
+   * @param extra.protect_content Pass True if the content of the story must be protected from forwarding and screenshotting
+   * @see https://core.telegram.org/bots/api#repoststory
+   */
+  repostStory(businessConnectionId: string, fromChatId: number, fromStoryId: number, activePeriod: 21600 | 43200 | 86400 | 172800, extra?: tt.ExtraRepostStory) {
+    return this.callApi('repostStory', {
+      from_chat_id: fromChatId,
+      from_story_id: fromStoryId,
+      active_period: activePeriod,
+      business_connection_id: businessConnectionId,
+      ...extra,
+    })
+  }
+
+  /**
+   * Edits a story previously posted by the bot on behalf of a managed business account. Requires the can_manage_stories business bot right. Returns Story on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param storyId Unique identifier of the story to edit
+   * @param content Content of the story
+   * @param extra.caption Caption of the story, 0-2048 characters after entities parsing
+   * @param extra.parse_mode Mode for parsing entities in the story caption. See formatting options for more details.
+   * @param extra.caption_entities A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
+   * @param extra.areas A JSON-serialized list of clickable areas to be shown on the story
+   * @see https://core.telegram.org/bots/api#editstory
+   */
+  editStory(businessConnectionId: string, storyId: number, content: tg.InputStoryContent, extra?: tt.ExtraEditStory) {
+    return this.callApi('editStory', {
+      content,
+      story_id: storyId,
+      business_connection_id: businessConnectionId,
+      ...fmtCaption(extra),
+    })
+  }
+
+  /**
+   * Deletes a story previously posted by the bot on behalf of a managed business account. Requires the can_manage_stories business bot right. Returns True on success.
+   * @param businessConnectionId Unique identifier of the business connection
+   * @param storyId Unique identifier of the story to delete
+   * @see https://core.telegram.org/bots/api#deletestory
+   */
+  deleteStory(businessConnectionId: string, storyId: number) {
+    return this.callApi('deleteStory', {
+      story_id: storyId,
+      business_connection_id: businessConnectionId,
+    })
   }
 
   /**

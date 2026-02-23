@@ -261,9 +261,9 @@
   integrity sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==
 
 "@tgify/types@^9.4.2":
-  version "9.4.2"
-  resolved "https://registry.yarnpkg.com/@tgify/types/-/types-9.4.2.tgz#418e63fe827a54772460c3989fb628389b9ba9c0"
-  integrity sha512-DHcUxxfIJDYdaUlyteAFdsk4IIDbiY9NxBm5nmrQGcwgIiQgmx/jpRebayiPFY4RFHkkQe8PDIoaW3qHul0GjA==
+  version "9.4.5"
+  resolved "https://registry.yarnpkg.com/@tgify/types/-/types-9.4.5.tgz#d1daede9078ea3a25aed936fa7d51099202f041a"
+  integrity sha512-o4viI2i2H112r576UPjdofSksycLr7igYXDbkNibJwpaFfdHJbjinb4GxV7xIyr9nVT8kvbVGwv8ElQ4BxfTJg==
 
 "@types/debug@^4.1.8":
   version "4.1.12"
