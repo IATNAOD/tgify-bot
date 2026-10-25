@@ -8,7 +8,7 @@
 <i>This is a fork of the Telegraf library and its continuation as I envision it. I will do my best to maintain full compatibility so that anyone who lacks certain functionality can migrate to this solution quickly and without friction.</i>
 
 <a href="https://core.telegram.org/bots/api">
-	<img src="https://img.shields.io/badge/Bot%20API-v8.3-f36caf.svg?style=flat-square" alt="Bot API Version" />
+	<img src="https://img.shields.io/badge/Bot%20API-v9.4-f36caf.svg?style=flat-square" alt="Bot API Version" />
 </a>
 <a href="https://packagephobia.com/result?p=@tgify/bot,node-telegram-bot-api">
 	<img src="https://flat.badgen.net/packagephobia/install/@tgify/bot" alt="install size" />
@@ -81,7 +81,7 @@ process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
 ```
 
-For additional bot examples see the new [`docs repo`](https://github.com/feathers-studio/telegraf-docs/).
+For additional bot examples see the Telegraf [`docs repo`](https://github.com/feathers-studio/telegraf-docs/): they work with Tgify once `telegraf` imports are replaced with `@tgify/bot`.
 
 ### Resources
 
@@ -121,7 +121,7 @@ $ pnpm add @tgify/bot
 
 [`Tgify`] instance represents your bot. It's responsible for obtaining updates and passing them to your handlers.
 
-Start by [listening to commands](https://telegraf.js.org/classes/Telegraf-1.html#command) and [launching](https://telegraf.js.org/classes/Telegraf-1.html#launch) your bot.
+Start by [listening to commands](https://tgify.iatnaod.space/classes/Tgify.html#command) and [launching](https://tgify.iatnaod.space/classes/Tgify.html#launch) your bot.
 
 ### `Context` class
 
@@ -234,7 +234,7 @@ createServer(tlsOptions, await bot.createWebhook({ domain: "example.com" })).lis
 - [`fastify` example integration](https://github.com/feathers-studio/telegraf-docs/blob/master/examples/webhook/fastify.ts)
 - [`koa` example integration](https://github.com/feathers-studio/telegraf-docs/blob/master/examples/webhook/koa.ts)
 - [Cloudflare Workers integration module](https://github.com/Tsuk1ko/cfworker-middware-telegraf)
-- Use [`bot.handleUpdate`](https://telegraf.js.org/classes/Telegraf-1.html#handleupdate) to write new integrations
+- Use [`bot.handleUpdate`](https://tgify.iatnaod.space/classes/Tgify.html#handleupdate) to write new integrations
 
 ### Error handling
 
@@ -325,17 +325,17 @@ With this simple ability, you can:
 - reuse [other people's code](https://www.npmjs.com/search?q=telegraf-),
 - do whatever **you** come up with!
 
-[`Tgify`]: https://telegraf.js.org/classes/Telegraf-1.html
-[`Composer`]: https://telegraf.js.org/classes/Composer.html
-[`Context`]: https://telegraf.js.org/classes/Context.html
-[`Router`]: https://telegraf.js.org/classes/Router.html
-[`session`]: https://telegraf.js.org/modules.html#session
-[`Scenes`]: https://telegraf.js.org/modules/Scenes.html
+[`Tgify`]: https://tgify.iatnaod.space/classes/Tgify.html
+[`Composer`]: https://tgify.iatnaod.space/classes/Composer.html
+[`Context`]: https://tgify.iatnaod.space/classes/Context.html
+[`Router`]: https://tgify.iatnaod.space/classes/Router.html
+[`session`]: https://tgify.iatnaod.space/functions/session.html
+[`Scenes`]: https://tgify.iatnaod.space/modules/Scenes.html
 
 ### Usage with TypeScript
 
 Tgify is written in TypeScript and therefore ships with declaration files for the entire library.
-Moreover, it includes types for the complete Telegram API via the [`typegram`](https://github.com/KnorpelSenf/typegram) package.
+Moreover, it includes types for the complete Telegram API via the [`@tgify/types`](https://github.com/IATNAOD/tgify-types) package.
 While most types of Tgify's API surface are self-explanatory, there's some notable things to keep in mind.
 
 #### Extending `Context`
