@@ -419,9 +419,7 @@ export namespace Parser {
             ) {
               i++
             }
-            attribute_value = to_lower(
-              source.slice(token_begin_pos, i - token_begin_pos)
-            )
+            attribute_value = to_lower(source.slice(token_begin_pos, i))
 
             if (!is_space(source[i]!) && source[i] !== C.greater_than) {
               throw new Error(
@@ -513,7 +511,7 @@ export namespace Parser {
           i++
         }
         const end_tag_name = decode(
-          source.slice(begin_pos + 2, i - begin_pos - 2)
+          source.slice(begin_pos + 2, i)
         ).toLowerCase()
         while (is_space(source[i]!) && source[i] !== C.null_byte) {
           i++
@@ -577,16 +575,16 @@ export namespace Parser {
               length: entity_length,
             })
           } else if (tag_name === 'tg-emoji') {
-            // TODO: verify that tg-emoji is always a number
-            const r_document_id = parseInt(last_nested_entity.argument)
-            if (Number.isNaN(r_document_id) || r_document_id === 0) {
+            // identifiers exceed Number.MAX_SAFE_INTEGER, so they stay strings
+            const r_document_id = last_nested_entity.argument.replace(/^0+/, '')
+            if (!/^\d+$/.test(r_document_id)) {
               throw new Error('Invalid custom emoji identifier specified')
             }
             entities.push({
               type: 'custom_emoji',
               offset: entity_offset,
               length: entity_length,
-              custom_emoji_id: String(r_document_id),
+              custom_emoji_id: r_document_id,
             })
           } else if (tag_name === 'a') {
             let url = last_nested_entity.argument
