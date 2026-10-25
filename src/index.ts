@@ -1,4 +1,4 @@
-export { Tgify } from './tgify';
+export { Tgify } from './tgify'
 export { Telegraf } from './telegraf'
 export { Context, NarrowedContext } from './context'
 export { Composer } from './composer'
@@ -16,3 +16,5 @@ export { deunionize } from './core/helpers/deunionize'
 export { session, MemorySessionStore, SessionStore } from './session'
 
 export * as Scenes from './scenes'
+
+export * as Extensions from './extensions'

@@ -49,6 +49,10 @@
     "./session": {
       "types": "./session.d.ts",
       "default": "./session.js"
+    },
+    "./extensions": {
+      "types": "./extensions.d.ts",
+      "default": "./extensions.js"
     }
   },
   "files": [
@@ -64,7 +68,8 @@
     "scenes.*",
     "utils.*",
     "markup.*",
-    "session.*"
+    "session.*",
+    "extensions.*"
   ],
   "bin": {
     "tgify": "lib/cli.mjs"
@@ -73,7 +78,7 @@
     "prepare": "npm run --silent build",
     "prebuild": "tsx build/clean.ts",
     "build": "tsc && npm run expose",
-    "expose": "tsx build/expose.ts types scenes filters format future utils markup session",
+    "expose": "tsx build/expose.ts types scenes filters format future utils markup session extensions",
     "build:docs": "typedoc src/index.ts",
     "pretest": "npm run build",
     "test": "ava",
