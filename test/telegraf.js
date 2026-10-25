@@ -255,6 +255,17 @@ test('ctx.entities() should return entities from message', (t) => {
   })
 })
 
+test('should provide businessConnection', (t) => {
+  const bot = createBot()
+  const connection = { id: 'abc', user: { id: 1 }, user_chat_id: 1, date: 0 }
+  bot.on('business_connection', (ctx) => {
+    t.is(ctx.businessConnection, connection)
+    // deprecated alias spelled with a Cyrillic "С" (U+0421)
+    t.is(ctx['businessСonnection'], connection)
+  })
+  return bot.handleUpdate({ business_connection: connection })
+})
+
 test('ctx.entities() should return only requested entities', (t) => {
   const bot = createBot()
   bot.on('message', (ctx) => {

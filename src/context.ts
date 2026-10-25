@@ -134,8 +134,15 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
     return this.update.chat_join_request as PropOr<U, 'chat_join_request'>
   }
 
-  get businessСonnection() {
+  get businessConnection() {
     return this.update.business_connection as PropOr<U, 'business_connection'>
+  }
+
+  /**
+   * @deprecated Misspelled with a Cyrillic "С" (U+0421). Use {@link Context.businessConnection}
+   */
+  get businessСonnection() {
+    return this.businessConnection
   }
 
   get businessMessage() {
