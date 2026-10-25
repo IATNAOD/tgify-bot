@@ -30,6 +30,7 @@ Tgify is a library that makes it simple for you to develop your own Telegram bot
 
 ### Release-notes
 
+- Version [1.5.0](https://github.com/IATNAOD/tgify-bot/tree/main/release-notes/1.5.0.md) from 25.10.26
 - Version [1.4.0](https://github.com/IATNAOD/tgify-bot/tree/main/release-notes/1.4.0.md) from 25.10.26
 - Version [1.3.0](https://github.com/IATNAOD/tgify-bot/tree/main/release-notes/1.3.0.md) from 23.02.26
 - Version [1.2.0](https://github.com/IATNAOD/tgify-bot/tree/main/release-notes/1.2.0.md) from 21.02.26
