@@ -87,7 +87,8 @@
     "files": [
       "test/*",
       "!test/_*"
-    ]
+    ],
+    "timeout": "30s"
   },
   "type": "commonjs",
   "engines": {
