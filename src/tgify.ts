@@ -43,6 +43,18 @@ export namespace Tgify {
     dropPendingUpdates?: boolean
     /** List the types of updates you want your bot to receive */
     allowedUpdates?: tt.UpdateType[]
+    /** Configuration options for when the bot is run via long polling */
+    polling?: {
+      /**
+       * Max number of updates handled at the same time. When set, new updates are fetched
+       * while earlier ones are still being handled, so one slow handler doesn't block the rest.
+       * Fetched updates are confirmed to Telegram before they're handled, so updates
+       * in progress are lost if the process crashes.
+       *
+       * By default, each batch of updates is handled completely before the next one is fetched.
+       */
+      concurrency?: number
+    }
     /** Configuration options for when the bot is run via webhooks */
     webhook?: {
       /** Domain for webhook. */
@@ -220,8 +232,11 @@ export class Tgify<C extends Context = Context> extends Composer<C> {
     })
   }
 
-  private startPolling(allowedUpdates: tt.UpdateType[] = []) {
-    this.polling = new Polling(this.telegram, allowedUpdates)
+  private startPolling(
+    allowedUpdates: tt.UpdateType[] = [],
+    concurrency?: number
+  ) {
+    this.polling = new Polling(this.telegram, allowedUpdates, concurrency)
     return this.polling.loop(async (update) => {
       await this.handleUpdate(update)
     })
@@ -285,7 +300,7 @@ export class Tgify<C extends Context = Context> extends Composer<C> {
     if (webhook === undefined) {
       await this.telegram.deleteWebhook({ drop_pending_updates })
       debug('Bot started with long polling')
-      await this.startPolling(allowed_updates)
+      await this.startPolling(allowed_updates, cfg.polling?.concurrency)
       return
     }
 
