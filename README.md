@@ -8,7 +8,7 @@
 <i>This is a fork of the Telegraf library and its continuation as I envision it. I will do my best to maintain full compatibility so that anyone who lacks certain functionality can migrate to this solution quickly and without friction.</i>
 
 <a href="https://core.telegram.org/bots/api">
-	<img src="https://img.shields.io/badge/Bot%20API-v9.4-f36caf.svg?style=flat-square" alt="Bot API Version" />
+	<img src="https://img.shields.io/badge/Bot%20API-v10.3-f36caf.svg?style=flat-square" alt="Bot API Version" />
 </a>
 <a href="https://packagephobia.com/result?p=@tgify/bot,node-telegram-bot-api">
 	<img src="https://flat.badgen.net/packagephobia/install/@tgify/bot" alt="install size" />
@@ -38,7 +38,7 @@ Tgify is a library that makes it simple for you to develop your own Telegram bot
 
 ### Features
 
-- Full [Telegram Bot API 9.4](https://core.telegram.org/bots/api) support
+- Full [Telegram Bot API 10.3](https://core.telegram.org/bots/api) support
 - [Excellent TypeScript typings](https://github.com/IATNAOD/tgify-bot/releases/tag/v1.0.0)
 - [Lightweight](https://packagephobia.com/result?p=@tgify/bot,node-telegram-bot-api)
 - [AWS **λ**](https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-handler.html)
