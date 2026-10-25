@@ -1,6 +1,5 @@
-import { SessionStore } from '../../session'
-
 import { defaults, reportInitError } from './defaults'
+import { SessionStore } from '../../session'
 import { requireOptional } from './optional'
 
 /** The part of a `MongoClient` from the `mongodb` package that the store uses */

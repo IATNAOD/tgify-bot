@@ -1,6 +1,8 @@
-import * as stream from 'stream'
-import { hasPropType } from '../helpers/check'
 import SandwichStream from 'sandwich-stream'
+import * as stream from 'stream'
+
+import { hasPropType } from '../helpers/check'
+
 const CRNL = '\r\n'
 
 interface Part {

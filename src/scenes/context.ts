@@ -1,8 +1,10 @@
-import BaseScene from './base'
+import d from 'debug'
+
+import { SessionContext } from '../session'
 import Composer from '../composer'
 import Context from '../context'
-import d from 'debug'
-import { SessionContext } from '../session'
+import BaseScene from './base'
+
 const debug = d('tgify:scenes:context')
 
 const noop = () => Promise.resolve()

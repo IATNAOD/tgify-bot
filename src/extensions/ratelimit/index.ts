@@ -1,7 +1,8 @@
 import debugFactory from 'debug'
-import type { Context } from '../../context'
-import type { MiddlewareFn } from '../../middleware'
+
 import { MemorySessionStore, type SessionStore } from '../../session'
+import type { MiddlewareFn } from '../../middleware'
+import type { Context } from '../../context'
 
 const debug = debugFactory('tgify:ratelimit')
 

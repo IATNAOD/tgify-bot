@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import d from 'debug'
-import parse from 'mri'
-import path from 'path'
-
 import type { RequestListener } from 'http'
 import type { TlsOptions } from 'tls'
+import parse from 'mri'
+import path from 'path'
+import d from 'debug'
+
 import { Telegraf, type Context, type Middleware } from './index.js'
 
 const debug = d('tgify:cli')

@@ -1,9 +1,9 @@
-import BaseScene, { SceneOptions } from '../base'
-import { Middleware, MiddlewareObj } from '../../middleware'
 import WizardContextWizard, { WizardSessionData } from './context'
+import { Middleware, MiddlewareObj } from '../../middleware'
+import BaseScene, { SceneOptions } from '../base'
+import SceneContextScene from '../context'
 import Composer from '../../composer'
 import Context from '../../context'
-import SceneContextScene from '../context'
 
 export class WizardScene<
   C extends Context & {

@@ -1,7 +1,9 @@
-import { Context } from './context'
+import d from 'debug'
+
 import { ExclusiveKeys, MaybePromise } from './core/helpers/util'
 import { MiddlewareFn } from './middleware'
-import d from 'debug'
+import { Context } from './context'
+
 const debug = d('tgify:session')
 
 export interface SyncSessionStore<T> {

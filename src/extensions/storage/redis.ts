@@ -1,8 +1,8 @@
 import debugFactory from 'debug'
-import { SessionStore } from '../../session'
 
 import { reportInitError } from './defaults'
 import { requireOptional } from './optional'
+import { SessionStore } from '../../session'
 
 const debug = debugFactory('tgify:storage')
 

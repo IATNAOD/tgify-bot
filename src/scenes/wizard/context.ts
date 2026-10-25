@@ -1,7 +1,7 @@
 import SceneContextScene, { SceneSession, SceneSessionData } from '../context'
-import Context from '../../context'
-import { Middleware } from '../../middleware'
 import { SessionContext } from '../../session'
+import { Middleware } from '../../middleware'
+import Context from '../../context'
 
 export interface WizardContext<
   D extends WizardSessionData = WizardSessionData,

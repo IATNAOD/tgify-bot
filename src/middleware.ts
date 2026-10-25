@@ -1,5 +1,5 @@
-import { Context } from './context'
 import { Update } from './core/types/typegram'
+import { Context } from './context'
 
 /*
   next's parameter is in a contravariant position, and thus, trying to type it

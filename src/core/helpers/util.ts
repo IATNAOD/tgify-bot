@@ -1,5 +1,5 @@
-import { FmtString } from './formatting'
 import { Deunionize, UnionKeys } from './deunionize'
+import { FmtString } from './formatting'
 
 export const env = process.env
 

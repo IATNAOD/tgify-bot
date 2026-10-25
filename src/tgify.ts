@@ -1,21 +1,24 @@
+import pTimeout from 'p-timeout'
 import * as crypto from 'crypto'
-import * as http from 'http'
+import { TlsOptions } from 'tls'
 import * as https from 'https'
+import * as http from 'http'
+import { URL } from 'url'
+import d from 'debug'
+
+import { compactOptions } from './core/helpers/compact'
+import generateCallback from './core/network/webhook'
+import { MaybePromise } from './core/helpers/util'
+import { Polling } from './core/network/polling'
+import ApiClient from './core/network/client'
 import * as tg from './core/types/typegram'
 import * as tt from './telegram-types'
 import { Composer } from './composer'
-import { MaybePromise } from './core/helpers/util'
-import ApiClient from './core/network/client'
-import { compactOptions } from './core/helpers/compact'
-import Context from './context'
-import d from 'debug'
-import generateCallback from './core/network/webhook'
-import { Polling } from './core/network/polling'
-import pTimeout from 'p-timeout'
 import Telegram from './telegram'
-import { TlsOptions } from 'tls'
-import { URL } from 'url'
+import Context from './context'
+
 import safeCompare = require('safe-compare')
+
 const debug = d('tgify:main')
 
 const DEFAULT_OPTIONS: Tgify.Options<Context> = {

@@ -1,10 +1,12 @@
-import * as tg from '../types/typegram'
-import * as tt from '../../telegram-types'
-import AbortController from 'abort-controller'
-import ApiClient from './client'
-import d from 'debug'
 import { promisify } from 'util'
+import d from 'debug'
+
+import AbortController from 'abort-controller'
+import * as tt from '../../telegram-types'
+import * as tg from '../types/typegram'
 import { TelegramError } from './error'
+import ApiClient from './client'
+
 const debug = d('tgify:polling')
 const wait = promisify(setTimeout)
 function always<T>(x: T) {
