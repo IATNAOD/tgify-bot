@@ -169,9 +169,13 @@ function defaultGetSessionKey(ctx: Context): string | undefined {
   return `${fromId}:${chatId}`
 }
 
-/** @deprecated Use `Map` */
+/**
+ * In-memory session store, the default one for `session()`.
+ * Pass `ttl` (in ms) to drop sessions that weren't updated for that long and keep memory bounded.
+ */
 export class MemorySessionStore<T> implements SyncSessionStore<T> {
   private readonly store = new Map<string, { session: T; expires: number }>()
+  private nextSweep = 0
 
   constructor(private readonly ttl = Infinity) {}
 
@@ -188,7 +192,16 @@ export class MemorySessionStore<T> implements SyncSessionStore<T> {
 
   set(name: string, value: T): void {
     const now = Date.now()
+    this.sweep(now)
     this.store.set(name, { session: value, expires: now + this.ttl })
+  }
+
+  /** `get` drops only the entry it reads, so expired sessions of inactive keys are swept once per ttl */
+  private sweep(now: number) {
+    if (now < this.nextSweep) return
+    this.nextSweep = now + this.ttl
+    for (const [name, entry] of this.store)
+      if (entry.expires < now) this.store.delete(name)
   }
 
   delete(name: string): void {
