@@ -1064,7 +1064,7 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
    * @param action - chat action type.
    * @param callback - a function to run along with the chat action.
    * @param extra - extra parameters for sendChatAction.
-   * @param {number} [extra.intervalDuration=8000] - The duration (in milliseconds) between subsequent sendChatAction requests.
+   * @param {number} [extra.intervalDuration=4000] - The duration (in milliseconds) between subsequent sendChatAction requests.
    */
   async persistentChatAction(
     action: Shorthand<'sendChatAction'>[0],
@@ -1720,28 +1720,25 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
    * @see https://core.telegram.org/bots/api#sendgift
    */
   sendGift(giftId: string, extra?: tt.ExtraSendGift) {
-    this.assert(this.chat, 'sendGift')
-    this.assert(this.from, 'sendGift')
+    // the sender gets the gift; channel posts have no sender, so the channel does
+    this.assert(this.from ?? this.chat, 'sendGift')
     return this.telegram.sendGift(giftId, {
-      ...(this.from ? { user_id: this.from?.id }
-        : this.chat ? { chat_id: this.chat?.id }
-          : {}),
-      ...extra
+      ...(this.from ? { user_id: this.from.id } : { chat_id: this.chat?.id }),
+      ...extra,
     })
   }
 
   /**
- * Gifts a Telegram Premium subscription to the given user. Returns True on success.
- * @param userId Unique identifier of the target user who will receive a Telegram Premium subscription
- * @param starCount Number of months the Telegram Premium subscription will be active for the user; must be one of 3, 6, or 12
- * @param monthCount Number of Telegram Stars to pay for the Telegram Premium subscription; must be 1000 for 3 months, 1500 for 6 months, and 2500 for 12 months
- * @param extra.text Text that will be shown along with the service message about the subscription; 0-128 characters
- * @param extra.text_parse_mode Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
- * @param extra.text_entities A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
- * @see https://core.telegram.org/bots/api#giftpremiumsubscription
- */
+   * Gifts a Telegram Premium subscription to the user from the current update. Returns True on success.
+   * @param starCount Number of Telegram Stars to pay for the Telegram Premium subscription; must be 1000 for 3 months, 1500 for 6 months, and 2500 for 12 months
+   * @param monthCount Number of months the Telegram Premium subscription will be active for the user; must be one of 3, 6, or 12
+   * @param extra.text Text that will be shown along with the service message about the subscription; 0-128 characters
+   * @param extra.text_parse_mode Mode for parsing entities in the text. See formatting options for more details. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+   * @param extra.text_entities A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
+   * @see https://core.telegram.org/bots/api#giftpremiumsubscription
+   */
   giftPremiumSubscription(starCount: 1000 | 1500 | 2500, monthCount: 3 | 6 | 12, extra?: tt.ExtraGiftPremiumSubscription) {
-    this.assert(this.from, 'sendGift')
+    this.assert(this.from, 'giftPremiumSubscription')
     return this.telegram.giftPremiumSubscription(this.from.id, starCount, monthCount, extra)
   }
 
