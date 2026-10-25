@@ -101,7 +101,7 @@
   },
   "types": "./typings/index.d.ts",
   "dependencies": {
-    "@tgify/types": "^9.4.2",
+    "@tgify/types": "^10.3.0",
     "abort-controller": "^3.0.0",
     "debug": "^4.3.5",
     "mri": "^1.2.0",
