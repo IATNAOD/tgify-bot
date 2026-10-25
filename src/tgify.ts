@@ -203,14 +203,18 @@ export class Tgify<C extends Context = Context> extends Composer<C> {
     )
   }
 
-  private getDomainOpts(opts: { domain: string; local?: boolean; path?: string }) {
-    const protocol = opts.local ? 'http:' : 'https:';
+  private getDomainOpts(opts: {
+    domain: string
+    local?: boolean
+    path?: string
+  }) {
+    const protocol = opts.local ? 'http:' : 'https:'
 
-    const path = opts.path || `/telegraf/${this.secretPathComponent()}`;
-    const domain = new URL(`${protocol}//${opts.domain}`).host;
-    const url = `${protocol}//${domain}${path}`;
+    const path = opts.path || `/telegraf/${this.secretPathComponent()}`
+    const domain = new URL(`${protocol}//${opts.domain}`).host
+    const url = `${protocol}//${domain}${path}`
 
-    return { domain, path, url };
+    return { domain, path, url }
   }
 
   /**
@@ -218,7 +222,11 @@ export class Tgify<C extends Context = Context> extends Composer<C> {
    * Returns an Express-style middleware you can pass to app.use()
    */
   async createWebhook(
-    opts: { domain: string; local?: boolean; path?: string } & tt.ExtraSetWebhook
+    opts: {
+      domain: string
+      local?: boolean
+      path?: string
+    } & tt.ExtraSetWebhook
   ) {
     const { domain, path, local, ...extra } = opts
 
@@ -343,7 +351,7 @@ export class Tgify<C extends Context = Context> extends Composer<C> {
         'Update %d is waiting for `botInfo` to be initialized',
         update.update_id
       ),
-        await (this.botInfoCall ??= this.telegram.getMe()))
+      await (this.botInfoCall ??= this.telegram.getMe()))
     debug('Processing update', update.update_id)
     const tg = new Telegram(this.token, this.telegram.options, webhookResponse)
     const TelegrafContext = this.options.contextType

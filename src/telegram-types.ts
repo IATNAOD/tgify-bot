@@ -122,14 +122,20 @@ export type ExtraBanChatMember = MakeExtra<
   'user_id' | 'until_date'
 >
 export type ExtraKickChatMember = ExtraBanChatMember
-export type ExtraGetUserProfileAudios = MakeExtra<'getUserProfileAudios', 'user_id'>
+export type ExtraGetUserProfileAudios = MakeExtra<
+  'getUserProfileAudios',
+  'user_id'
+>
 export type ExtraSetUserEmojiStatus = MakeExtra<'setUserEmojiStatus', 'user_id'>
 export type ExtraLocation = MakeExtra<'sendLocation', 'latitude' | 'longitude'>
 export type ExtraMediaGroup = MakeExtra<'sendMediaGroup', 'media'>
 export type ExtraPhoto = MakeExtra<'sendPhoto', 'photo'>
 export type ExtraPoll = MakeExtra<'sendPoll', 'question' | 'options' | 'type'>
 export type ExtraSendChecklist = MakeExtra<'sendChecklist', 'checklist'>
-export type ExtraEditMessageChecklist = MakeExtra<'editMessageChecklist', 'business_connection_id' | 'message_id' | 'checklist'>
+export type ExtraEditMessageChecklist = MakeExtra<
+  'editMessageChecklist',
+  'business_connection_id' | 'message_id' | 'checklist'
+>
 export type ExtraPromoteChatMember = MakeExtra<'promoteChatMember', 'user_id'>
 export type ExtraReplyMessage = MakeExtra<'sendMessage', 'text'>
 export type ExtraForwardMessage = MakeExtra<
@@ -158,7 +164,10 @@ export type ExtraVenue = MakeExtra<
 >
 export type ExtraVideo = MakeExtra<'sendVideo', 'video'>
 export type ExtraVideoNote = MakeExtra<'sendVideoNote', 'video_note'>
-export type ExtraPaidMedia = MakeExtra<'sendPaidMedia', 'media' | 'caption' | 'star_count'>
+export type ExtraPaidMedia = MakeExtra<
+  'sendPaidMedia',
+  'media' | 'caption' | 'star_count'
+>
 export type ExtraVoice = MakeExtra<'sendVoice', 'voice'>
 export type ExtraBanChatSenderChat = MakeExtra<
   'banChatSenderChat',
@@ -169,32 +178,19 @@ export type ExtraEditForumTopic = MakeExtra<
   'editForumTopic',
   'message_thread_id'
 >
-export type ExtraSendGift = MakeExtra<
-  'sendGift',
-  'gift_id'
->
+export type ExtraSendGift = MakeExtra<'sendGift', 'gift_id'>
 export type ExtraGiftPremiumSubscription = MakeExtra<
   'giftPremiumSubscription',
   'user_id' | 'star_count' | 'month_count'
 >
-export type ExtraVerifyUser = MakeExtra<
-  'verifyUser',
-  'user_id'
->
-export type ExtraVerifyChat = MakeExtra<
-  'verifyChat'
->
+export type ExtraVerifyUser = MakeExtra<'verifyUser', 'user_id'>
+export type ExtraVerifyChat = MakeExtra<'verifyChat'>
 export type ExtraGetBusinessAccountGifts = MakeExtra<
   'getBusinessAccountGifts',
   'business_connection_id'
 >
-export type ExtraGetUserGifts = MakeExtra<
-  'getUserGifts',
-  'user_id'
->
-export type ExtraGetChatGifts = MakeExtra<
-  'getChatGifts'
->
+export type ExtraGetUserGifts = MakeExtra<'getUserGifts', 'user_id'>
+export type ExtraGetChatGifts = MakeExtra<'getChatGifts'>
 export type ExtraUpgradeGift = MakeExtra<
   'upgradeGift',
   'business_connection_id' | 'owned_gift_id'
@@ -235,14 +231,14 @@ export type UpdateType = Exclude<UnionKeys<Update>, keyof Update>
 export type MessageSubType =
   | 'forward_date'
   | Exclude<
-    UnionKeys<Message>,
-    keyof Message.CaptionableMessage | 'entities' | 'media_group_id'
-  >
+      UnionKeys<Message>,
+      keyof Message.CaptionableMessage | 'entities' | 'media_group_id'
+    >
 
 type ExtractPartial<T extends object, U extends object> = T extends unknown
   ? Required<T> extends U
-  ? T
-  : never
+    ? T
+    : never
   : never
 
 /**

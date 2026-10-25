@@ -105,6 +105,6 @@ export const mention = (
   typeof user === 'number'
     ? link(name, 'tg://user?id=' + user)
     : (linkOrMention(name, {
-      type: 'text_mention',
-      user,
-    }) as FmtString<'text_mention'>)
+        type: 'text_mention',
+        user,
+      }) as FmtString<'text_mention'>)

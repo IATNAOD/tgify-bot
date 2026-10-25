@@ -107,7 +107,10 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   get messageReactionCount() {
-    return this.update.message_reaction_count as PropOr<U, 'message_reaction_count'>
+    return this.update.message_reaction_count as PropOr<
+      U,
+      'message_reaction_count'
+    >
   }
 
   get callbackQuery() {
@@ -150,11 +153,17 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   get editedBusinessMessage() {
-    return this.update.edited_business_message as PropOr<U, 'edited_business_message'>
+    return this.update.edited_business_message as PropOr<
+      U,
+      'edited_business_message'
+    >
   }
 
   get deletedBusinessMessages() {
-    return this.update.deleted_business_messages as PropOr<U, 'deleted_business_messages'>
+    return this.update.deleted_business_messages as PropOr<
+      U,
+      'deleted_business_messages'
+    >
   }
 
   get chatBoost() {
@@ -269,9 +278,9 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
         // https://github.com/microsoft/TypeScript/pull/51502
         typeof filter !== 'string'
           ? // filter is a type guard
-          filter(this.update)
+            filter(this.update)
           : // check if filter is the update type
-          filter in this.update
+            filter in this.update
       )
         return true
 
@@ -364,7 +373,7 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   /**
    * @see https://core.telegram.org/bots/api#getstartransactions
    */
-  getStarTransactions(offset?: number, limit?: number,) {
+  getStarTransactions(offset?: number, limit?: number) {
     return this.telegram.getStarTransactions(offset, limit)
   }
 
@@ -373,10 +382,7 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
    */
   refundStarPayment(...args: Shorthand<'refundStarPayment'>) {
     this.assert(this.from, 'refundStarPayment')
-    return this.telegram.refundStarPayment(
-      this.from.id,
-      ...args
-    )
+    return this.telegram.refundStarPayment(this.from.id, ...args)
   }
 
   /**
@@ -384,10 +390,7 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
    */
   editUserStarSubscription(...args: Shorthand<'editUserStarSubscription'>) {
     this.assert(this.from, 'editUserStarSubscription')
-    return this.telegram.editUserStarSubscription(
-      this.from.id,
-      ...args
-    )
+    return this.telegram.editUserStarSubscription(this.from.id, ...args)
   }
 
   /**
@@ -484,16 +487,27 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   /**
- * Use this method to edit a checklist on behalf of a connected business account. On success, the edited Message is returned.
- * @param businessConnectionId Unique identifier of the business connection on behalf of which the message will be sent
- * @param messageId Unique identifier for the target message
- * @param checklist A JSON-serialized object for the checklist to send
- * @param extra.reply_markup A JSON-serialized object for the new inline keyboard for the message
- * @see https://core.telegram.org/bots/api#editmessagechecklist
- */
-  editMessageChecklist(businessConnectionId: string, messageId: number, checklist: tg.InputChecklist, extra?: tt.ExtraEditMessageChecklist) {
+   * Use this method to edit a checklist on behalf of a connected business account. On success, the edited Message is returned.
+   * @param businessConnectionId Unique identifier of the business connection on behalf of which the message will be sent
+   * @param messageId Unique identifier for the target message
+   * @param checklist A JSON-serialized object for the checklist to send
+   * @param extra.reply_markup A JSON-serialized object for the new inline keyboard for the message
+   * @see https://core.telegram.org/bots/api#editmessagechecklist
+   */
+  editMessageChecklist(
+    businessConnectionId: string,
+    messageId: number,
+    checklist: tg.InputChecklist,
+    extra?: tt.ExtraEditMessageChecklist
+  ) {
     this.assert(this.chat, 'editMessageChecklist')
-    return this.telegram.editMessageChecklist(businessConnectionId, this.chat?.id, messageId, checklist, extra)
+    return this.telegram.editMessageChecklist(
+      businessConnectionId,
+      this.chat?.id,
+      messageId,
+      checklist,
+      extra
+    )
   }
 
   /**
@@ -549,7 +563,9 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   /**
    * @see https://core.telegram.org/bots/api#createchatsubscriptioninvitelink
    */
-  createChatSubscriptionInviteLink(...args: Shorthand<'createChatSubscriptionInviteLink'>) {
+  createChatSubscriptionInviteLink(
+    ...args: Shorthand<'createChatSubscriptionInviteLink'>
+  ) {
     this.assert(this.chat, 'createChatSubscriptionInviteLink')
     return this.telegram.createChatSubscriptionInviteLink(this.chat.id, ...args)
   }
@@ -557,7 +573,9 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   /**
    * @see https://core.telegram.org/bots/api#editchatsubscriptioninvitelink
    */
-  editChatSubscriptionInviteLink(...args: Shorthand<'editChatSubscriptionInviteLink'>) {
+  editChatSubscriptionInviteLink(
+    ...args: Shorthand<'editChatSubscriptionInviteLink'>
+  ) {
     this.assert(this.chat, 'editChatSubscriptionInviteLink')
     return this.telegram.editChatSubscriptionInviteLink(this.chat.id, ...args)
   }
@@ -891,7 +909,9 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
     extra?: tt.ExtraPaidMedia
   ) {
     this.assert(this.chat, 'sendPaidMedia')
-    return this.telegram.sendPaidMedia(this.chat.id, starCount, media, { ...extra, })
+    return this.telegram.sendPaidMedia(this.chat.id, starCount, media, {
+      ...extra,
+    })
   }
 
   /**
@@ -958,7 +978,11 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   /**
    * @see https://core.telegram.org/bots/api#sendpoll
    */
-  sendPoll(poll: string, options: readonly tg.InputPollOption[], extra?: tt.ExtraPoll) {
+  sendPoll(
+    poll: string,
+    options: readonly tg.InputPollOption[],
+    extra?: tt.ExtraPoll
+  ) {
     this.assert(this.chat, 'sendPoll')
     return this.telegram.sendPoll(this.chat.id, poll, options, {
       message_thread_id: getThreadId(this),
@@ -984,17 +1008,30 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
    * @param extra.reply_markup A JSON-serialized object for an inline keyboard
    * @see https://core.telegram.org/bots/api#sendchecklist
    */
-  sendChecklist(businessConnectionId: string, checklist: tg.InputChecklist, extra?: tt.ExtraSendChecklist) {
+  sendChecklist(
+    businessConnectionId: string,
+    checklist: tg.InputChecklist,
+    extra?: tt.ExtraSendChecklist
+  ) {
     this.assert(this.chat, 'sendChecklist')
-    return this.telegram.sendChecklist(businessConnectionId, this.chat.id, checklist, {
-      ...extra,
-    })
+    return this.telegram.sendChecklist(
+      businessConnectionId,
+      this.chat.id,
+      checklist,
+      {
+        ...extra,
+      }
+    )
   }
 
   /**
    * @see https://core.telegram.org/bots/api#sendpoll
    */
-  sendQuiz(quiz: string, options: readonly tg.InputPollOption[], extra?: tt.ExtraPoll) {
+  sendQuiz(
+    quiz: string,
+    options: readonly tg.InputPollOption[],
+    extra?: tt.ExtraPoll
+  ) {
     this.assert(this.chat, 'sendQuiz')
     return this.telegram.sendQuiz(this.chat.id, quiz, options, {
       message_thread_id: getThreadId(this),
@@ -1023,18 +1060,24 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
    * @param extra.sendDate Point in time (Unix timestamp) when the post is expected to be published; omit if the date has already been specified when the suggested post was created. If specified, then the date must be not more than 2678400 seconds (30 days) in the future
    * @see https://core.telegram.org/bots/api#approvesuggestedpost
    */
-  approveSuggestedPost(messageId: number, extra?: tt.ExtraApproveSuggestedPost) {
+  approveSuggestedPost(
+    messageId: number,
+    extra?: tt.ExtraApproveSuggestedPost
+  ) {
     this.assert(this.chat, 'approveSuggestedPost')
     return this.telegram.approveSuggestedPost(this.chat.id, messageId, extra)
   }
 
   /**
- * Use this method to decline a suggested post in a direct messages chat. The bot must have the 'can_manage_direct_messages' administrator right in the corresponding channel chat. Returns True on success.
- * @param messageId Identifier of a suggested post message to approve
- * @param extra.comment Comment for the creator of the suggested post; 0-128 characters
- * @see https://core.telegram.org/bots/api#declinesuggestedpost
- */
-  declineSuggestedPost(messageId: number, extra?: tt.ExtraDeclineSuggestedPost) {
+   * Use this method to decline a suggested post in a direct messages chat. The bot must have the 'can_manage_direct_messages' administrator right in the corresponding channel chat. Returns True on success.
+   * @param messageId Identifier of a suggested post message to approve
+   * @param extra.comment Comment for the creator of the suggested post; 0-128 characters
+   * @see https://core.telegram.org/bots/api#declinesuggestedpost
+   */
+  declineSuggestedPost(
+    messageId: number,
+    extra?: tt.ExtraDeclineSuggestedPost
+  ) {
     this.assert(this.chat, 'declineSuggestedPost')
     return this.telegram.declineSuggestedPost(this.chat.id, messageId, extra)
   }
@@ -1737,9 +1780,18 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
    * @param extra.text_entities A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
    * @see https://core.telegram.org/bots/api#giftpremiumsubscription
    */
-  giftPremiumSubscription(starCount: 1000 | 1500 | 2500, monthCount: 3 | 6 | 12, extra?: tt.ExtraGiftPremiumSubscription) {
+  giftPremiumSubscription(
+    starCount: 1000 | 1500 | 2500,
+    monthCount: 3 | 6 | 12,
+    extra?: tt.ExtraGiftPremiumSubscription
+  ) {
     this.assert(this.from, 'giftPremiumSubscription')
-    return this.telegram.giftPremiumSubscription(this.from.id, starCount, monthCount, extra)
+    return this.telegram.giftPremiumSubscription(
+      this.from.id,
+      starCount,
+      monthCount,
+      extra
+    )
   }
 
   /**
@@ -1784,8 +1836,8 @@ type UpdateTypes<U extends Deunionize<tg.Update>> = Extract<
 
 export type GetUpdateContent<U extends tg.Update> =
   U extends tg.Update.CallbackQueryUpdate
-  ? U['callback_query']['message']
-  : U[UpdateTypes<U>]
+    ? U['callback_query']['message']
+    : U[UpdateTypes<U>]
 
 type Getter<U extends Deunionize<tg.Update>, P extends string> = PropOr<
   GetUpdateContent<U>,
@@ -1819,20 +1871,20 @@ export type MaybeMessage<
 type GetMsg<U extends tg.Update> = U extends tg.Update.MessageUpdate
   ? U['message']
   : U extends tg.Update.ChannelPostUpdate
-  ? U['channel_post']
-  : U extends tg.Update.EditedChannelPostUpdate
-  ? U['edited_channel_post']
-  : U extends tg.Update.EditedMessageUpdate
-  ? U['edited_message']
-  : U extends tg.Update.BusinessMessageUpdate
-  ? U['business_message']
-  : U extends tg.Update.EditedBusinessMessageUpdate
-  ? U['edited_business_message']
-  : U extends tg.Update.DeletedBusinessMessagesUpdate
-  ? U['deleted_business_messages']
-  : U extends tg.Update.CallbackQueryUpdate
-  ? U['callback_query']['message']
-  : undefined
+    ? U['channel_post']
+    : U extends tg.Update.EditedChannelPostUpdate
+      ? U['edited_channel_post']
+      : U extends tg.Update.EditedMessageUpdate
+        ? U['edited_message']
+        : U extends tg.Update.BusinessMessageUpdate
+          ? U['business_message']
+          : U extends tg.Update.EditedBusinessMessageUpdate
+            ? U['edited_business_message']
+            : U extends tg.Update.DeletedBusinessMessagesUpdate
+              ? U['deleted_business_messages']
+              : U extends tg.Update.CallbackQueryUpdate
+                ? U['callback_query']['message']
+                : undefined
 
 function getMessageFromAnySource<U extends tg.Update>(ctx: Context<U>) {
   const msg =
@@ -1850,22 +1902,22 @@ function getMessageFromAnySource<U extends tg.Update>(ctx: Context<U>) {
 type GetUserFromAnySource<U extends tg.Update> =
   // check if it's a message type with `from`
   GetMsg<U> extends { from: tg.User }
-  ? tg.User
-  : U extends  // these updates have `from`
-  | tg.Update.CallbackQueryUpdate
-  | tg.Update.InlineQueryUpdate
-  | tg.Update.ShippingQueryUpdate
-  | tg.Update.PreCheckoutQueryUpdate
-  | tg.Update.ChosenInlineResultUpdate
-  | tg.Update.ChatMemberUpdate
-  | tg.Update.MyChatMemberUpdate
-  | tg.Update.ChatJoinRequestUpdate
-  // these updates have `user`
-  | tg.Update.MessageReactionUpdate
-  | tg.Update.PollAnswerUpdate
-  | tg.Update.ChatBoostUpdate
-  ? tg.User
-  : undefined
+    ? tg.User
+    : U extends  // these updates have `from`
+          | tg.Update.CallbackQueryUpdate
+          | tg.Update.InlineQueryUpdate
+          | tg.Update.ShippingQueryUpdate
+          | tg.Update.PreCheckoutQueryUpdate
+          | tg.Update.ChosenInlineResultUpdate
+          | tg.Update.ChatMemberUpdate
+          | tg.Update.MyChatMemberUpdate
+          | tg.Update.ChatJoinRequestUpdate
+          // these updates have `user`
+          | tg.Update.MessageReactionUpdate
+          | tg.Update.PollAnswerUpdate
+          | tg.Update.ChatBoostUpdate
+      ? tg.User
+      : undefined
 
 function getUserFromAnySource<U extends tg.Update>(ctx: Context<U>) {
   if (ctx.callbackQuery) return ctx.callbackQuery.from
@@ -1887,13 +1939,14 @@ function getUserFromAnySource<U extends tg.Update>(ctx: Context<U>) {
   )
 }
 
-type GetMsgId<U extends tg.Update> = GetMsg<U> extends { message_id: number }
-  ? number
-  : U extends tg.Update.MessageReactionUpdate
-  ? number
-  : U extends tg.Update.MessageReactionCountUpdate
-  ? number
-  : undefined
+type GetMsgId<U extends tg.Update> =
+  GetMsg<U> extends { message_id: number }
+    ? number
+    : U extends tg.Update.MessageReactionUpdate
+      ? number
+      : U extends tg.Update.MessageReactionCountUpdate
+        ? number
+        : undefined
 
 function getMsgIdFromAnySource<U extends tg.Update>(ctx: Context<U>) {
   const msg = getMessageFromAnySource(ctx)
@@ -1901,13 +1954,14 @@ function getMsgIdFromAnySource<U extends tg.Update>(ctx: Context<U>) {
     ?.message_id as GetMsgId<U>
 }
 
-type GetText<U extends tg.Update> = GetMsg<U> extends tg.Message.TextMessage
-  ? string
-  : GetMsg<U> extends tg.Message
-  ? string | undefined
-  : U extends tg.Update.PollUpdate
-  ? string | undefined
-  : undefined
+type GetText<U extends tg.Update> =
+  GetMsg<U> extends tg.Message.TextMessage
+    ? string
+    : GetMsg<U> extends tg.Message
+      ? string | undefined
+      : U extends tg.Update.PollUpdate
+        ? string | undefined
+        : undefined
 
 function getTextAndEntitiesFromAnySource<U extends tg.Update>(ctx: Context<U>) {
   const msg = ctx.msg
@@ -1915,13 +1969,13 @@ function getTextAndEntitiesFromAnySource<U extends tg.Update>(ctx: Context<U>) {
   let text, entities
 
   if (msg) {
-    if ('text' in msg) (text = msg.text), (entities = msg.entities)
+    if ('text' in msg) ((text = msg.text), (entities = msg.entities))
     else if ('caption' in msg)
-      (text = msg.caption), (entities = msg.caption_entities)
+      ((text = msg.caption), (entities = msg.caption_entities))
     else if ('game' in msg)
-      (text = msg.game.text), (entities = msg.game.text_entities)
+      ((text = msg.game.text), (entities = msg.game.text_entities))
   } else if (ctx.poll)
-    (text = ctx.poll.explanation), (entities = ctx.poll.explanation_entities)
+    ((text = ctx.poll.explanation), (entities = ctx.poll.explanation_entities))
 
   return [text, entities] as const
 }

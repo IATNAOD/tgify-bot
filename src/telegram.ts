@@ -42,8 +42,9 @@ export class Telegram extends ApiClient {
     }
 
     return new URL(
-      `./file/${this.options.apiMode}${this.token}${this.options.testEnv ? '/test' : ''
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      `./file/${this.options.apiMode}${this.token}${
+        this.options.testEnv ? '/test' : ''
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       }/${fileId.file_path!}`,
       this.options.apiRoot
     )
@@ -189,12 +190,17 @@ export class Telegram extends ApiClient {
    * @param extra.entities A JSON-serialized list of special entities that appear in message text, which can be specified instead of parse_mode
    * @see https://core.telegram.org/bots/api#sendmessagedraft
    */
-  sendMessageDraft(chatId: number, draftId: number, text: string, extra?: tt.ExtraSendMessageDraft) {
+  sendMessageDraft(
+    chatId: number,
+    draftId: number,
+    text: string,
+    extra?: tt.ExtraSendMessageDraft
+  ) {
     return this.callApi('sendMessageDraft', {
       text,
       chat_id: chatId,
       draft_id: draftId,
-      ...extra
+      ...extra,
     })
   }
 
@@ -211,7 +217,7 @@ export class Telegram extends ApiClient {
     return this.callApi('sendChatAction', { chat_id, action, ...extra })
   }
 
-  /** 
+  /**
    * Use this method to change the chosen reactions on a message. Service messages can't be reacted to.
    * Automatically forwarded messages from a channel to its discussion group have the same available
    * reactions as messages in the channel. In albums, bots must react to the first message.
@@ -270,7 +276,7 @@ export class Telegram extends ApiClient {
    * @param extra.statusExpirationDate Expiration date of the emoji status, if any
    */
   setUserEmojiStatus(userId: number, extra?: tt.ExtraSetUserEmojiStatus) {
-    return this.callApi('setUserEmojiStatus', { user_id: userId, ...extra, })
+    return this.callApi('setUserEmojiStatus', { user_id: userId, ...extra })
   }
 
   /**
@@ -550,12 +556,17 @@ export class Telegram extends ApiClient {
    * @param extra.reply_markup A JSON-serialized object for an inline keyboard
    * @see https://core.telegram.org/bots/api#sendchecklist
    */
-  sendChecklist(businessConnectionId: string, chatId: number, checklist: tg.InputChecklist, extra?: tt.ExtraSendChecklist) {
+  sendChecklist(
+    businessConnectionId: string,
+    chatId: number,
+    checklist: tg.InputChecklist,
+    extra?: tt.ExtraSendChecklist
+  ) {
     return this.callApi('sendChecklist', {
       checklist,
       chat_id: chatId,
       business_connection_id: businessConnectionId,
-      ...extra
+      ...extra,
     })
   }
 
@@ -603,11 +614,15 @@ export class Telegram extends ApiClient {
    * @param extra.sendDate Point in time (Unix timestamp) when the post is expected to be published; omit if the date has already been specified when the suggested post was created. If specified, then the date must be not more than 2678400 seconds (30 days) in the future
    * @see https://core.telegram.org/bots/api#approvesuggestedpost
    */
-  approveSuggestedPost(chatId: number, messageId: number, extra?: tt.ExtraApproveSuggestedPost) {
+  approveSuggestedPost(
+    chatId: number,
+    messageId: number,
+    extra?: tt.ExtraApproveSuggestedPost
+  ) {
     return this.callApi('approveSuggestedPost', {
       chat_id: chatId,
       message_id: messageId,
-      ...extra
+      ...extra,
     })
   }
 
@@ -618,11 +633,15 @@ export class Telegram extends ApiClient {
    * @param extra.comment Comment for the creator of the suggested post; 0-128 characters
    * @see https://core.telegram.org/bots/api#declinesuggestedpost
    */
-  declineSuggestedPost(chatId: number, messageId: number, extra?: tt.ExtraDeclineSuggestedPost) {
+  declineSuggestedPost(
+    chatId: number,
+    messageId: number,
+    extra?: tt.ExtraDeclineSuggestedPost
+  ) {
     return this.callApi('declineSuggestedPost', {
       chat_id: chatId,
       message_id: messageId,
-      ...extra
+      ...extra,
     })
   }
 
@@ -1019,11 +1038,15 @@ export class Telegram extends ApiClient {
    * @param extra.allow_group_chats Pass True if the message can be sent to group and supergroup chats
    * @param extra.allow_channel_chats Pass True if the message can be sent to channel chats
    */
-  savePreparedInlineMessage(userId: number, result: tg.InlineQueryResult, extra?: tt.ExtraSavePreparedInlineMessage) {
+  savePreparedInlineMessage(
+    userId: number,
+    result: tg.InlineQueryResult,
+    extra?: tt.ExtraSavePreparedInlineMessage
+  ) {
     return this.callApi('savePreparedInlineMessage', {
       result,
       user_id: userId,
-      ...extra
+      ...extra,
     })
   }
 
@@ -1040,10 +1063,7 @@ export class Telegram extends ApiClient {
    * @param offset  Number of transactions to skip in the response
    * @param limit The maximum number of transactions to be retrieved. Values between 1-100 are accepted. Defaults to 100
    */
-  getStarTransactions(
-    offset?: number,
-    limit?: number
-  ) {
+  getStarTransactions(offset?: number, limit?: number) {
     return this.callApi('getStarTransactions', {
       limit,
       offset,
@@ -1055,10 +1075,7 @@ export class Telegram extends ApiClient {
    * @param userId  Identifier of the user whose payment will be refunded
    * @param paymentChargeId Telegram payment identifier
    */
-  refundStarPayment(
-    userId: number,
-    paymentChargeId: string
-  ) {
+  refundStarPayment(userId: number, paymentChargeId: string) {
     return this.callApi('refundStarPayment', {
       user_id: userId,
       telegram_payment_charge_id: paymentChargeId,
@@ -1079,7 +1096,7 @@ export class Telegram extends ApiClient {
     return this.callApi('editUserStarSubscription', {
       user_id: userId,
       telegram_payment_charge_id: paymentChargeId,
-      is_canceled: isCanceled
+      is_canceled: isCanceled,
     })
   }
 
@@ -1178,7 +1195,9 @@ export class Telegram extends ApiClient {
     return this.callApi('editMessageReplyMarkup', {
       ...(chatId !== undefined && { chat_id: chatId }),
       ...(messageId !== undefined && { message_id: messageId }),
-      ...(inlineMessageId !== undefined && { inline_message_id: inlineMessageId }),
+      ...(inlineMessageId !== undefined && {
+        inline_message_id: inlineMessageId,
+      }),
       reply_markup: markup,
     })
   }
@@ -1216,21 +1235,27 @@ export class Telegram extends ApiClient {
   }
 
   /**
- * Use this method to edit a checklist on behalf of a connected business account. On success, the edited Message is returned.
- * @param businessConnectionId Unique identifier of the business connection on behalf of which the message will be sent
- * @param chatId Unique identifier for the target chat
- * @param messageId Unique identifier for the target message
- * @param checklist A JSON-serialized object for the checklist to send
- * @param extra.reply_markup A JSON-serialized object for the new inline keyboard for the message
- * @see https://core.telegram.org/bots/api#editmessagechecklist
- */
-  editMessageChecklist(businessConnectionId: string, chatId: number, messageId: number, checklist: tg.InputChecklist, extra?: tt.ExtraEditMessageChecklist) {
+   * Use this method to edit a checklist on behalf of a connected business account. On success, the edited Message is returned.
+   * @param businessConnectionId Unique identifier of the business connection on behalf of which the message will be sent
+   * @param chatId Unique identifier for the target chat
+   * @param messageId Unique identifier for the target message
+   * @param checklist A JSON-serialized object for the checklist to send
+   * @param extra.reply_markup A JSON-serialized object for the new inline keyboard for the message
+   * @see https://core.telegram.org/bots/api#editmessagechecklist
+   */
+  editMessageChecklist(
+    businessConnectionId: string,
+    chatId: number,
+    messageId: number,
+    checklist: tg.InputChecklist,
+    extra?: tt.ExtraEditMessageChecklist
+  ) {
     return this.callApi('editMessageChecklist', {
       checklist,
       chat_id: chatId,
       message_id: messageId,
       business_connection_id: businessConnectionId,
-      ...extra
+      ...extra,
     })
   }
 
@@ -1816,7 +1841,6 @@ export class Telegram extends ApiClient {
     })
   }
 
-
   /**
    * Changes the profile photo of the bot. Returns True on success.
    * @param photo The new profile photo to set
@@ -1825,7 +1849,6 @@ export class Telegram extends ApiClient {
   setMyProfilePhoto(photo: tg.InputProfilePhoto) {
     return this.callApi('setMyProfilePhoto', { photo })
   }
-
 
   /**
    * Removes the profile photo of the bot. Requires no parameters. Returns True on success.
@@ -1924,12 +1947,17 @@ export class Telegram extends ApiClient {
    * @param extra.text_entities A JSON-serialized list of special entities that appear in the gift text. It can be specified instead of text_parse_mode. Entities other than “bold”, “italic”, “underline”, “strikethrough”, “spoiler”, and “custom_emoji” are ignored.
    * @see https://core.telegram.org/bots/api#giftpremiumsubscription
    */
-  giftPremiumSubscription(userId: number, starCount: 1000 | 1500 | 2500, monthCount: 3 | 6 | 12, extra?: tt.ExtraGiftPremiumSubscription) {
+  giftPremiumSubscription(
+    userId: number,
+    starCount: 1000 | 1500 | 2500,
+    monthCount: 3 | 6 | 12,
+    extra?: tt.ExtraGiftPremiumSubscription
+  ) {
     return this.callApi('giftPremiumSubscription', {
       user_id: userId,
       star_count: starCount,
       month_count: monthCount,
-      ...extra
+      ...extra,
     })
   }
 
@@ -1974,7 +2002,11 @@ export class Telegram extends ApiClient {
    * @param messageId Unique identifier of the message to mark as read
    * @see https://core.telegram.org/bots/api#readbusinessmessage
    */
-  readBusinessMessage(businessConnectionId: string, chatId: number, messageId: number) {
+  readBusinessMessage(
+    businessConnectionId: string,
+    chatId: number,
+    messageId: number
+  ) {
     return this.callApi('readBusinessMessage', {
       chat_id: chatId,
       message_id: messageId,
@@ -2003,7 +2035,11 @@ export class Telegram extends ApiClient {
    * @param lastName The new value of the last name for the business account; 0-64 characters
    * @see https://core.telegram.org/bots/api#setbusinessaccountname
    */
-  setBusinessAccountName(businessConnectionId: string, firstName: string, lastName: string) {
+  setBusinessAccountName(
+    businessConnectionId: string,
+    firstName: string,
+    lastName: string
+  ) {
     return this.callApi('setBusinessAccountName', {
       first_name: firstName,
       last_name: lastName,
@@ -2044,7 +2080,11 @@ export class Telegram extends ApiClient {
    * @param isPublic Pass True to set the public photo, which will be visible even if the main photo is hidden by the business account's privacy settings. An account can have only one public photo.
    * @see https://core.telegram.org/bots/api#setbusinessaccountprofilephoto
    */
-  setBusinessAccountProfilePhoto(businessConnectionId: string, photo: tg.InputProfilePhoto, isPublic?: boolean) {
+  setBusinessAccountProfilePhoto(
+    businessConnectionId: string,
+    photo: tg.InputProfilePhoto,
+    isPublic?: boolean
+  ) {
     return this.callApi('setBusinessAccountProfilePhoto', {
       photo,
       is_public: isPublic,
@@ -2058,7 +2098,10 @@ export class Telegram extends ApiClient {
    * @param isPublic Pass True to remove the public photo, which is visible even if the main photo is hidden by the business account's privacy settings. After the main photo is removed, the previous profile photo (if present) becomes the main photo.
    * @see https://core.telegram.org/bots/api#removebusinessaccountprofilephoto
    */
-  removeBusinessAccountProfilePhoto(businessConnectionId: string, isPublic?: boolean) {
+  removeBusinessAccountProfilePhoto(
+    businessConnectionId: string,
+    isPublic?: boolean
+  ) {
     return this.callApi('removeBusinessAccountProfilePhoto', {
       is_public: isPublic,
       business_connection_id: businessConnectionId,
@@ -2072,7 +2115,11 @@ export class Telegram extends ApiClient {
    * @param acceptedGiftTypes Types of gifts accepted by the business account
    * @see https://core.telegram.org/bots/api#setbusinessaccountgiftsettings
    */
-  setBusinessAccountGiftSettings(businessConnectionId: string, showGiftButton: boolean, acceptedGiftTypes: tg.AcceptedGiftTypes) {
+  setBusinessAccountGiftSettings(
+    businessConnectionId: string,
+    showGiftButton: boolean,
+    acceptedGiftTypes: tg.AcceptedGiftTypes
+  ) {
     return this.callApi('setBusinessAccountGiftSettings', {
       show_gift_button: showGiftButton,
       accepted_gift_types: acceptedGiftTypes,
@@ -2097,7 +2144,10 @@ export class Telegram extends ApiClient {
    * @param starCount Number of Telegram Stars to transfer; 1-10000
    * @see https://core.telegram.org/bots/api#transferbusinessaccountstars
    */
-  transferBusinessAccountStars(businessConnectionId: string, starCount: number) {
+  transferBusinessAccountStars(
+    businessConnectionId: string,
+    starCount: number
+  ) {
     return this.callApi('transferBusinessAccountStars', {
       star_count: starCount,
       business_connection_id: businessConnectionId,
@@ -2119,10 +2169,13 @@ export class Telegram extends ApiClient {
    * @param extra.limit The maximum number of gifts to be returned; 1-100. Defaults to 100
    * @see https://core.telegram.org/bots/api#getbusinessaccountgifts
    */
-  getBusinessAccountGifts(businessConnectionId: string, extra?: tt.ExtraGetBusinessAccountGifts) {
+  getBusinessAccountGifts(
+    businessConnectionId: string,
+    extra?: tt.ExtraGetBusinessAccountGifts
+  ) {
     return this.callApi('getBusinessAccountGifts', {
       business_connection_id: businessConnectionId,
-      ...extra
+      ...extra,
     })
   }
 
@@ -2142,7 +2195,7 @@ export class Telegram extends ApiClient {
   getUserGifts(userId: number, extra?: tt.ExtraGetUserGifts) {
     return this.callApi('getUserGifts', {
       user_id: userId,
-      ...extra
+      ...extra,
     })
   }
 
@@ -2164,7 +2217,7 @@ export class Telegram extends ApiClient {
   getChatGifts(chatId: number | string, extra?: tt.ExtraGetChatGifts) {
     return this.callApi('getChatGifts', {
       chat_id: chatId,
-      ...extra
+      ...extra,
     })
   }
 
@@ -2189,11 +2242,15 @@ export class Telegram extends ApiClient {
    * @param extra.star_count amount of Telegram Stars that will be paid for the upgrade from the business account balance. If gift.prepaid_upgrade_star_count > 0, then pass 0, otherwise, the can_transfer_stars business bot right is required and gift.upgrade_star_count must be passed.
    * @see https://core.telegram.org/bots/api#upgradegift
    */
-  upgradeGift(businessConnectionId: string, giftId: string, extra?: tt.ExtraUpgradeGift) {
+  upgradeGift(
+    businessConnectionId: string,
+    giftId: string,
+    extra?: tt.ExtraUpgradeGift
+  ) {
     return this.callApi('upgradeGift', {
       owned_gift_id: giftId,
       business_connection_id: businessConnectionId,
-      ...extra
+      ...extra,
     })
   }
 
@@ -2205,12 +2262,17 @@ export class Telegram extends ApiClient {
    * @param extra.star_count The amount of Telegram Stars that will be paid for the transfer from the business account balance. If positive, then the can_transfer_stars business bot right is required.
    * @see https://core.telegram.org/bots/api#transfergift
    */
-  transferGift(businessConnectionId: string, giftId: string, newOwnerChatid: number, extra?: tt.ExtraTransferGift) {
+  transferGift(
+    businessConnectionId: string,
+    giftId: string,
+    newOwnerChatid: number,
+    extra?: tt.ExtraTransferGift
+  ) {
     return this.callApi('transferGift', {
       owned_gift_id: giftId,
       new_owner_chat_id: newOwnerChatid,
       business_connection_id: businessConnectionId,
-      ...extra
+      ...extra,
     })
   }
 
@@ -2227,7 +2289,12 @@ export class Telegram extends ApiClient {
    * @param extra.protect_content Pass True if the content of the story must be protected from forwarding and screenshotting
    * @see https://core.telegram.org/bots/api#poststory
    */
-  postStory(businessConnectionId: string, content: tg.InputStoryContent, activePeriod: 21600 | 43200 | 86400 | 172800, extra?: tt.ExtraPostStory) {
+  postStory(
+    businessConnectionId: string,
+    content: tg.InputStoryContent,
+    activePeriod: 21600 | 43200 | 86400 | 172800,
+    extra?: tt.ExtraPostStory
+  ) {
     return this.callApi('postStory', {
       content,
       active_period: activePeriod,
@@ -2248,7 +2315,13 @@ export class Telegram extends ApiClient {
    * @param extra.protect_content Pass True if the content of the story must be protected from forwarding and screenshotting
    * @see https://core.telegram.org/bots/api#repoststory
    */
-  repostStory(businessConnectionId: string, fromChatId: number, fromStoryId: number, activePeriod: 21600 | 43200 | 86400 | 172800, extra?: tt.ExtraRepostStory) {
+  repostStory(
+    businessConnectionId: string,
+    fromChatId: number,
+    fromStoryId: number,
+    activePeriod: 21600 | 43200 | 86400 | 172800,
+    extra?: tt.ExtraRepostStory
+  ) {
     return this.callApi('repostStory', {
       from_chat_id: fromChatId,
       from_story_id: fromStoryId,
@@ -2269,7 +2342,12 @@ export class Telegram extends ApiClient {
    * @param extra.areas A JSON-serialized list of clickable areas to be shown on the story
    * @see https://core.telegram.org/bots/api#editstory
    */
-  editStory(businessConnectionId: string, storyId: number, content: tg.InputStoryContent, extra?: tt.ExtraEditStory) {
+  editStory(
+    businessConnectionId: string,
+    storyId: number,
+    content: tg.InputStoryContent,
+    extra?: tt.ExtraEditStory
+  ) {
     return this.callApi('editStory', {
       content,
       story_id: storyId,

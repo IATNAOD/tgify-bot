@@ -7,11 +7,10 @@ import {
 
 type Hideable<B> = B & { hide: boolean }
 
-
 export function text(
   text: string,
   hide = false,
-  extra?: Pick<KeyboardButton.Text, 'style' | 'icon_custom_emoji_id'>,
+  extra?: Pick<KeyboardButton.Text, 'style' | 'icon_custom_emoji_id'>
 ): Hideable<KeyboardButton.Text> {
   return { text, hide, ...extra }
 }
@@ -111,7 +110,7 @@ export function url(
   text: string,
   url: string,
   hide = false,
-  extra?: Pick<InlineKeyboardButton.Url, 'style' | 'icon_custom_emoji_id'>,
+  extra?: Pick<InlineKeyboardButton.Url, 'style' | 'icon_custom_emoji_id'>
 ): Hideable<InlineKeyboardButton.Url> {
   return { text, url, hide, ...extra }
 }
@@ -120,7 +119,7 @@ export function callback(
   text: string,
   data: string,
   hide = false,
-  extra?: Pick<InlineKeyboardButton.Callback, 'style' | 'icon_custom_emoji_id'>,
+  extra?: Pick<InlineKeyboardButton.Callback, 'style' | 'icon_custom_emoji_id'>
 ): Hideable<InlineKeyboardButton.Callback> {
   return { text, callback_data: data, hide, ...extra }
 }
@@ -129,7 +128,7 @@ export function copyText(
   text: string,
   copy_text: string,
   hide = false,
-  extra?: Pick<InlineKeyboardButton.CopyText, 'style' | 'icon_custom_emoji_id'>,
+  extra?: Pick<InlineKeyboardButton.CopyText, 'style' | 'icon_custom_emoji_id'>
 ): Hideable<InlineKeyboardButton.CopyText> {
   return { text, copy_text: { text: copy_text }, hide, ...extra }
 }
@@ -138,7 +137,10 @@ export function switchToChat(
   text: string,
   value: string,
   hide = false,
-  extra?: Pick<InlineKeyboardButton.SwitchInline, 'style' | 'icon_custom_emoji_id'>,
+  extra?: Pick<
+    InlineKeyboardButton.SwitchInline,
+    'style' | 'icon_custom_emoji_id'
+  >
 ): Hideable<InlineKeyboardButton.SwitchInline> {
   return { text, switch_inline_query: value, hide, ...extra }
 }
@@ -147,7 +149,10 @@ export function switchToCurrentChat(
   text: string,
   value: string,
   hide = false,
-  extra?: Pick<InlineKeyboardButton.SwitchInlineCurrentChat, 'style' | 'icon_custom_emoji_id'>,
+  extra?: Pick<
+    InlineKeyboardButton.SwitchInlineCurrentChat,
+    'style' | 'icon_custom_emoji_id'
+  >
 ): Hideable<InlineKeyboardButton.SwitchInlineCurrentChat> {
   return { text, switch_inline_query_current_chat: value, hide, ...extra }
 }
@@ -155,7 +160,7 @@ export function switchToCurrentChat(
 export function game(
   text: string,
   hide = false,
-  extra?: Pick<InlineKeyboardButton.Game, 'style' | 'icon_custom_emoji_id'>,
+  extra?: Pick<InlineKeyboardButton.Game, 'style' | 'icon_custom_emoji_id'>
 ): Hideable<InlineKeyboardButton.Game> {
   return { text, callback_game: {}, hide, ...extra }
 }
@@ -163,7 +168,7 @@ export function game(
 export function pay(
   text: string,
   hide = false,
-  extra?: Pick<InlineKeyboardButton.Pay, 'style' | 'icon_custom_emoji_id'>,
+  extra?: Pick<InlineKeyboardButton.Pay, 'style' | 'icon_custom_emoji_id'>
 ): Hideable<InlineKeyboardButton.Pay> {
   return { text, pay: true, hide, ...extra }
 }
@@ -177,13 +182,13 @@ export function login(
     request_write_access?: boolean
   } = {},
   hide = false,
-  extra?: Pick<InlineKeyboardButton.Login, 'style' | 'icon_custom_emoji_id'>,
+  extra?: Pick<InlineKeyboardButton.Login, 'style' | 'icon_custom_emoji_id'>
 ): Hideable<InlineKeyboardButton.Login> {
   return {
     text,
     hide,
     login_url: { ...opts, url },
-    ...extra
+    ...extra,
   }
 }
 
@@ -192,12 +197,12 @@ export function webApp(
   text: string,
   url: string,
   hide = false,
-  extra?: Pick<InlineKeyboardButton.WebApp, 'style' | 'icon_custom_emoji_id'>,
+  extra?: Pick<InlineKeyboardButton.WebApp, 'style' | 'icon_custom_emoji_id'>
 ): Hideable<InlineKeyboardButton.WebApp> {
   return {
     text,
     hide,
     web_app: { url },
-    ...extra
+    ...extra,
   }
 }
