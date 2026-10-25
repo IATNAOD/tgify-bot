@@ -6,7 +6,7 @@ import * as http from 'http'
 import * as https from 'https'
 import * as path from 'path'
 import fetch, { RequestInit } from 'node-fetch'
-import { hasProp, hasPropType } from '../helpers/check'
+import { hasProp } from '../helpers/check'
 import { InputFile, Opts, Telegram } from '../types/typegram'
 import { AbortSignal } from 'abort-controller'
 import { compactOptions } from '../helpers/compact'
@@ -62,7 +62,24 @@ const DEFAULT_EXTENSIONS: Record<string, string | undefined> = {
   animation: 'mp4',
   video_note: 'mp4',
   voice: 'ogg',
+  live_photo: 'mp4',
 }
+
+/**
+ * Fields that hold a file inside nested objects such as `InputMedia`, `InputPaidMedia`,
+ * `InputPollMedia`, `InputProfilePhoto`, `InputStoryContent` and `InputSticker`.
+ * Nested files can only be uploaded as separate parts referenced via `attach://`.
+ */
+const NESTED_FILE_FIELDS = new Set([
+  'media',
+  'thumb',
+  'cover',
+  'photo',
+  'video',
+  'sticker',
+  'thumbnail',
+  'animation',
+])
 
 const DEFAULT_OPTIONS: ApiClient.Options = {
   apiRoot: 'https://api.telegram.org',
@@ -76,25 +93,41 @@ const DEFAULT_OPTIONS: ApiClient.Options = {
   testEnv: false,
 }
 
+// typed objects (InputMedia, InlineQueryResult, ...) may have a `url`, but are never files
+function isInputFile(value: unknown): value is InputFile {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    !hasProp(value, 'type') &&
+    ((hasProp(value, 'source') && !!value.source) ||
+      (hasProp(value, 'url') && !!value.url))
+  )
+}
+
+// streams and buffers are class instances, so they are never walked into
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  if (typeof value !== 'object' || value === null) return false
+  const proto = Object.getPrototypeOf(value)
+  return proto === Object.prototype || proto === null
+}
+
+function includesNestedMedia(value: unknown): boolean {
+  if (Array.isArray(value)) return value.some(includesNestedMedia)
+  if (!isPlainObject(value)) return false
+  return Object.entries(value).some(
+    ([key, field]) =>
+      (NESTED_FILE_FIELDS.has(key) && isInputFile(field)) ||
+      includesNestedMedia(field)
+  )
+}
+
 function includesMedia(payload: Record<string, unknown>) {
   return Object.entries(payload).some(([key, value]) => {
+    // has a `url` that is not a file
     if (key === 'link_preview_options') return false
 
-    if (Array.isArray(value)) {
-      return value.some(
-        ({ media }) =>
-          media && typeof media === 'object' && (media.source || media.url)
-      )
-    }
-    return (
-      value &&
-      typeof value === 'object' &&
-      ((hasProp(value, 'source') && value.source) ||
-        (hasProp(value, 'url') && value.url) ||
-        (hasPropType(value, 'media', 'object') &&
-          ((hasProp(value.media, 'source') && value.media.source) ||
-            (hasProp(value.media, 'url') && value.media.url))))
-    )
+    return isInputFile(value) || includesNestedMedia(value)
   })
 }
 
@@ -168,59 +201,49 @@ async function attachFormValue(
     })
     return
   }
-  if (id === 'thumb' || id === 'thumbnail') {
+  if ((id === 'thumb' || id === 'thumbnail') && isInputFile(value)) {
     const attachmentId = crypto.randomBytes(16).toString('hex')
-    await attachFormMedia(form, value as InputFile, attachmentId, agent)
+    await attachFormMedia(form, value, attachmentId, agent)
     return form.addPart({
       headers: { 'content-disposition': `form-data; name="${id}"` },
       body: `attach://${attachmentId}`,
     })
   }
+  if (isInputFile(value)) {
+    return await attachFormMedia(form, value, id, agent)
+  }
+  // any other object or array is sent as JSON, with its nested files as separate parts
+  return form.addPart({
+    headers: { 'content-disposition': `form-data; name="${id}"` },
+    body: JSON.stringify(await attachNestedMedia(form, value, agent), replacer),
+  })
+}
+
+/** Uploads files found in nested objects, replacing them with `attach://` references */
+async function attachNestedMedia(
+  form: MultipartStream,
+  value: unknown,
+  agent: ApiClient.Agent
+): Promise<unknown> {
   if (Array.isArray(value)) {
-    const items = await Promise.all(
-      value.map(async (item) => {
-        if (typeof item.media !== 'object') {
-          return await Promise.resolve(item)
-        }
-        const attachmentId = crypto.randomBytes(16).toString('hex')
-        await attachFormMedia(form, item.media, attachmentId, agent)
-        const thumb = item.thumb ?? item.thumbnail
-        if (typeof thumb === 'object') {
-          const thumbAttachmentId = crypto.randomBytes(16).toString('hex')
-          await attachFormMedia(form, thumb, thumbAttachmentId, agent)
-          return {
-            ...item,
-            media: `attach://${attachmentId}`,
-            thumbnail: `attach://${thumbAttachmentId}`,
-          }
-        }
-        return { ...item, media: `attach://${attachmentId}` }
-      })
+    return await Promise.all(
+      value.map((item) => attachNestedMedia(form, item, agent))
     )
-    return form.addPart({
-      headers: { 'content-disposition': `form-data; name="${id}"` },
-      body: JSON.stringify(items),
-    })
   }
-  if (
-    value &&
-    typeof value === 'object' &&
-    hasProp(value, 'media') &&
-    hasProp(value, 'type') &&
-    typeof value.media !== 'undefined' &&
-    typeof value.type !== 'undefined'
-  ) {
-    const attachmentId = crypto.randomBytes(16).toString('hex')
-    await attachFormMedia(form, value.media as InputFile, attachmentId, agent)
-    return form.addPart({
-      headers: { 'content-disposition': `form-data; name="${id}"` },
-      body: JSON.stringify({
-        ...value,
-        media: `attach://${attachmentId}`,
-      }),
+  if (!isPlainObject(value)) return value
+  const entries = await Promise.all(
+    Object.entries(value).map(async ([key, field]) => {
+      if (!NESTED_FILE_FIELDS.has(key) || !isInputFile(field)) {
+        return [key, await attachNestedMedia(form, field, agent)]
+      }
+      const attachmentId = crypto.randomBytes(16).toString('hex')
+      await attachFormMedia(form, field, attachmentId, agent)
+      // `thumb` was renamed to `thumbnail` in Bot API 6.6
+      const name = key === 'thumb' ? 'thumbnail' : key
+      return [name, `attach://${attachmentId}`]
     })
-  }
-  return await attachFormMedia(form, value as InputFile, id, agent)
+  )
+  return Object.fromEntries(entries)
 }
 
 async function attachFormMedia(
