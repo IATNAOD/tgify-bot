@@ -37,7 +37,7 @@ Tgify is a library that makes it simple for you to develop your own Telegram bot
 
 ### Features
 
-- Full [Telegram Bot API 8.3](https://core.telegram.org/bots/api) support
+- Full [Telegram Bot API 9.4](https://core.telegram.org/bots/api) support
 - [Excellent TypeScript typings](https://github.com/IATNAOD/tgify-bot/releases/tag/v1.0.0)
 - [Lightweight](https://packagephobia.com/result?p=@tgify/bot,node-telegram-bot-api)
 - [AWS **λ**](https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-handler.html)
@@ -46,6 +46,7 @@ Tgify is a library that makes it simple for you to develop your own Telegram bot
   / [Fly.io](https://fly.io/docs/languages-and-frameworks/node)
   / Whatever ready
 - `http/https/fastify/Connect.js/express.js` compatible webhooks
+- Built-in [extensions](#extensions): rate limiting, Redis and MongoDB session storage, entities to HTML/MarkdownV2
 - Extensible
 
 ### Example
@@ -331,6 +332,77 @@ With this simple ability, you can:
 [`Router`]: https://tgify.iatnaod.space/classes/Router.html
 [`session`]: https://tgify.iatnaod.space/functions/session.html
 [`Scenes`]: https://tgify.iatnaod.space/modules/Scenes.html
+
+### Extensions
+
+Optional building blocks ship with the package and are available as `Extensions`:
+
+```js
+const { Tgify, session, Extensions } = require('@tgify/bot')
+```
+
+#### Rate limiting
+
+`Extensions.ratelimit` lets at most `limit` updates with the same key through per `window` ms.
+By default the key is the sender (`ctx.from.id`), counters are kept in memory, and extra updates are dropped:
+
+```js
+bot.use(
+  Extensions.ratelimit({
+    window: 3000,
+    limit: 1,
+    onLimitExceeded: (ctx) => ctx.reply('Too many requests, slow down'),
+  })
+)
+```
+
+It doesn't need `session()`. To share the limit between several bot instances, pass a shared store:
+`store: Extensions.storage.Redis({ url, prefix: 'tgify:ratelimit:', ttl: 3000 })`.
+
+#### Session storage
+
+`session()` keeps data in memory by default, so it's lost on restart.
+`Extensions.storage` provides persistent stores for Redis and MongoDB.
+Their drivers aren't installed with Tgify, add the one you use:
+
+```shellscript
+$ npm install redis    # for Extensions.storage.Redis
+$ npm install mongodb  # for Extensions.storage.Mongo
+```
+
+```js
+bot.use(
+  session({
+    store: Extensions.storage.Redis({
+      url: 'redis://127.0.0.1:6379',
+      ttl: 7 * 24 * 60 * 60 * 1000, // optional: forget sessions not saved for a week
+    }),
+  })
+)
+
+// or
+bot.use(
+  session({
+    store: Extensions.storage.Mongo({ url: 'mongodb://127.0.0.1:27017', database: 'bot' }),
+  })
+)
+```
+
+- Both stores accept an existing client (`{ client }`) instead of `url`, and `onInitError` to handle connection errors.
+- If the driver isn't installed, creating the store throws an error with the install command.
+- In TypeScript, pass your session type: `Extensions.storage.Redis<MySession>({ ... })`.
+
+#### Entities to HTML and MarkdownV2
+
+`Extensions.entity` turns a formatted message back into markup, and parses markup into entities:
+
+```js
+bot.on(message('text'), (ctx) => ctx.replyWithHTML(Extensions.entity.toHTML(ctx.message)))
+
+const { text, entities } = Extensions.entity.parse_html('<b>bold</b> text')
+```
+
+`Extensions.entity.toMarkdownV2` works the same way for MarkdownV2.
 
 ### Usage with TypeScript
 
