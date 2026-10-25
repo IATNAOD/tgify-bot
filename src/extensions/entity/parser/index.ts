@@ -16,12 +16,15 @@ type MessageEntity = {
     | 'spoiler'
     | 'custom_emoji'
     | 'expandable_blockquote'
+    | 'date_time'
   offset: number
   length: number
   url?: string
   user?: number
   language?: string
   custom_emoji_id?: string
+  unix_time?: number
+  date_time_format?: string
 }
 
 import {
@@ -282,6 +285,8 @@ export namespace Parser {
     interface EntityInfo {
       tag_name: string
       argument: string
+      // tg-time is the only tag with two attributes: unix goes to argument
+      date_time_format?: string
       entity_offset: number
       entity_begin_pos: number
     }
@@ -339,6 +344,7 @@ export namespace Parser {
           tag_name !== 'ins' &&
           tag_name !== 'tg-spoiler' &&
           tag_name !== 'tg-emoji' &&
+          tag_name !== 'tg-time' &&
           tag_name !== 'span' &&
           tag_name !== 'pre' &&
           tag_name !== 'code' &&
@@ -350,6 +356,7 @@ export namespace Parser {
         }
 
         let argument = ''
+        let date_time_format: string | undefined
 
         while (source[i] !== C.greater_than) {
           while (source[i] !== C.null_byte && is_space(source[i]!)) {
@@ -479,6 +486,10 @@ export namespace Parser {
             argument = attribute_value_str.slice(3)
           } else if (tag_name === 'tg-emoji' && attribute_name === 'emoji-id') {
             argument = attribute_value_str
+          } else if (tag_name === 'tg-time' && attribute_name === 'unix') {
+            argument = attribute_value_str
+          } else if (tag_name === 'tg-time' && attribute_name === 'format') {
+            date_time_format = attribute_value_str
           } else if (
             tag_name === 'blockquote' &&
             attribute_name === 'expandable'
@@ -497,6 +508,7 @@ export namespace Parser {
         nested_entities.push({
           tag_name,
           argument,
+          date_time_format,
           entity_offset: utf16_offset,
           entity_begin_pos: result_end,
         })
@@ -585,6 +597,24 @@ export namespace Parser {
               offset: entity_offset,
               length: entity_length,
               custom_emoji_id: r_document_id,
+            })
+          } else if (tag_name === 'tg-time') {
+            const { argument, date_time_format } = last_nested_entity
+            if (!/^\d+$/.test(argument)) {
+              throw new Error('Invalid Unix time specified')
+            }
+            if (
+              date_time_format &&
+              !/^(r|w?[dD]?[tT]?)$/.test(date_time_format)
+            ) {
+              throw new Error('Invalid date-time format specified')
+            }
+            entities.push({
+              type: 'date_time',
+              offset: entity_offset,
+              length: entity_length,
+              unix_time: Number(argument),
+              ...(date_time_format && { date_time_format }),
             })
           } else if (tag_name === 'a') {
             let url = last_nested_entity.argument

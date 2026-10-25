@@ -1,7 +1,7 @@
-import * as serialisers from './serialisers'
-import * as escapers from './escapers'
 import type { Message, TextMessage, Tree, MessageEntity } from './types'
+import * as serialisers from './serialisers'
 import { Parser } from './parser/index'
+import * as escapers from './escapers'
 
 export const parse_html = Parser.parse_html
 export const parse_markdown = Parser.parse_markdown
@@ -27,6 +27,8 @@ const TYPE_PRIORITY: Record<MessageEntity['type'], number> = {
   spoiler: 94,
   custom_emoji: 99,
   expandable_blockquote: 0,
+  // not in tdlib's list; uses the custom emoji syntax in MarkdownV2, so it nests the same way
+  date_time: 99,
 }
 
 function findChildren(
@@ -139,7 +141,7 @@ const sameKind = (a: MessageEntity, b: MessageEntity) => {
   )
 }
 
-/** Merges overlapping or adjacent entities of the same kind; custom emoji are kept as is */
+/** Merges overlapping or adjacent entities of the same kind; custom emoji and dates are kept as is */
 const optimizeEntities = (entities: MessageEntity[]) => {
   // filter copies the array, so the caller's entities aren't reordered
   const sorted = entities
@@ -150,7 +152,7 @@ const optimizeEntities = (entities: MessageEntity[]) => {
   let currentEntity: MessageEntity | null = null
 
   for (const entity of sorted) {
-    if (entity.type == 'custom_emoji') {
+    if (entity.type == 'custom_emoji' || entity.type == 'date_time') {
       optimizedEntities.push(entity)
 
       continue

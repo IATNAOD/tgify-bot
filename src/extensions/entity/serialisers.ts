@@ -1,5 +1,5 @@
-import type { Serialiser, Node } from './types.ts'
 import { HTMLAttribute, MarkdownV2URL } from './escapers'
+import type { Serialiser, Node } from './types.ts'
 
 export const HTML: Serialiser = (match: string, node?: Node) => {
   switch (node?.type) {
@@ -31,6 +31,10 @@ export const HTML: Serialiser = (match: string, node?: Node) => {
       return `<blockquote expandable>${match}</blockquote>`
     case 'custom_emoji':
       return `<tg-emoji emoji-id="${node.custom_emoji_id}">${match}</tg-emoji>`
+    case 'date_time':
+      if (node.date_time_format)
+        return `<tg-time unix="${node.unix_time}" format="${HTMLAttribute(node.date_time_format)}">${match}</tg-time>`
+      return `<tg-time unix="${node.unix_time}">${match}</tg-time>`
     case 'mention':
     case 'hashtag':
     case 'cashtag':
@@ -81,6 +85,10 @@ export const MarkdownV2: Serialiser = (match: string, node?: Node) => {
       )
     case 'custom_emoji':
       return `![${match}](tg://emoji?id=${node.custom_emoji_id})`
+    case 'date_time':
+      if (node.date_time_format)
+        return `![${match}](tg://time?unix=${node.unix_time}&format=${MarkdownV2URL(node.date_time_format)})`
+      return `![${match}](tg://time?unix=${node.unix_time})`
     case 'mention':
     case 'hashtag':
     case 'cashtag':
