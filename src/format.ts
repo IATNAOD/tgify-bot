@@ -90,6 +90,33 @@ export const link = (
   //
   linkOrMention(content, { type: 'text_link', url }) as FmtString<'text_link'>
 
+/**
+ * Date-time format: `r` for relative time, otherwise an optional `w` (weekday),
+ * `d`/`D` (short/long date) and `t`/`T` (short/long time). Empty shows the text as is.
+ * @see https://core.telegram.org/bots/api#date-time-entity-formatting
+ */
+export type DateTimeFormat =
+  | 'r'
+  | `${'w' | ''}${'d' | 'D' | ''}${'t' | 'T' | ''}`
+
+/**
+ * Formatted date and time, shown to each user in their local format.
+ * @param content Text of the entity; shown as is when `format` is omitted
+ * @param unixTime Unix time the entity points at
+ * @param format How to display the date and time
+ */
+export const dateTime = (
+  content: Nestable<
+    'fmt' | 'bold' | 'italic' | 'underline' | 'strikethrough' | 'spoiler'
+  >,
+  unixTime: number,
+  format?: DateTimeFormat
+) =>
+  createFmt('date_time', {
+    unix_time: unixTime,
+    ...(format && { date_time_format: format }),
+  })(content) as FmtString<'date_time'>
+
 export const mention = (
   name: Nestable<
     | 'fmt'

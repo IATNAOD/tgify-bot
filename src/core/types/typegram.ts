@@ -1,16 +1,17 @@
 import * as Typegram from '@tgify/types'
 
 // internal type provisions
-export * from '@tgify/types/api'
+export * from '@tgify/types/passport'
+export * from '@tgify/types/settings'
+export * from '@tgify/types/message'
+export * from '@tgify/types/methods'
+export * from '@tgify/types/payment'
+export * from '@tgify/types/update'
 export * from '@tgify/types/inline'
 export * from '@tgify/types/manage'
 export * from '@tgify/types/markup'
-export * from '@tgify/types/message'
-export * from '@tgify/types/methods'
-export * from '@tgify/types/passport'
-export * from '@tgify/types/payment'
-export * from '@tgify/types/settings'
-export * from '@tgify/types/update'
+export * from '@tgify/types/rich'
+export * from '@tgify/types/api'
 
 // telegraf input file definition
 interface InputFileByPath {
@@ -44,10 +45,17 @@ export type InputMediaVideo = Typegram.InputMediaVideo<InputFile>
 export type InputMediaAnimation = Typegram.InputMediaAnimation<InputFile>
 export type InputMediaAudio = Typegram.InputMediaAudio<InputFile>
 export type InputMediaDocument = Typegram.InputMediaDocument<InputFile>
+export type InputMediaLivePhoto = Typegram.InputMediaLivePhoto<InputFile>
 export type InputPaidMediaPhoto = Typegram.InputPaidMediaPhoto<InputFile>
 export type InputPaidMediaVideo = Typegram.InputPaidMediaVideo<InputFile>
+export type InputPaidMediaLivePhoto =
+  Typegram.InputPaidMediaLivePhoto<InputFile>
 export type InputProfilePhoto = Typegram.InputProfilePhoto<InputFile>
 export type InputStoryContent = Typegram.InputStoryContent<InputFile>
+export type InputPollOption = Typegram.InputPollOption<InputFile>
+export type InputPollMedia = Typegram.InputPollMedia<InputFile>
+export type InputRichMessage = Typegram.InputRichMessage<InputFile>
+export type InputRichBlock = Typegram.InputRichBlock<InputFile>
 
 // tiny helper types
 export type ChatAction = Opts<'sendChatAction'>['action']

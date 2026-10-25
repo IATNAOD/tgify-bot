@@ -1,23 +1,23 @@
 /** @format */
 
+import { UnionKeys } from './core/helpers/deunionize'
 import { Expand } from './core/helpers/util'
+import { FmtString } from './format'
+export { Markup } from './markup'
 import {
-  Message,
   Opts,
-  Telegram,
   Update,
+  Message,
+  Telegram,
   InputMediaAudio,
-  InputMediaDocument,
   InputMediaPhoto,
   InputMediaVideo,
+  InputMediaDocument,
+  InputMediaLivePhoto,
   InputPaidMediaPhoto,
   InputPaidMediaVideo,
+  InputPaidMediaLivePhoto,
 } from './core/types/typegram'
-
-import { UnionKeys } from './core/helpers/deunionize'
-import { FmtString } from './format'
-
-export { Markup } from './markup'
 
 // tiny helper types
 export type ChatAction = Opts<'sendChatAction'>['action']
@@ -104,6 +104,18 @@ export type ExtraEditMessageText = MakeExtra<
   'editMessageText',
   'message_id' | 'inline_message_id' | 'text'
 >
+export type ExtraEditEphemeralMessageText = MakeExtra<
+  'editEphemeralMessageText',
+  'receiver_user_id' | 'ephemeral_message_id' | 'text'
+>
+export type ExtraEditEphemeralMessageMedia = MakeExtra<
+  'editEphemeralMessageMedia',
+  'receiver_user_id' | 'ephemeral_message_id' | 'media'
+>
+export type ExtraEditEphemeralMessageCaption = MakeExtra<
+  'editEphemeralMessageCaption',
+  'receiver_user_id' | 'ephemeral_message_id' | 'caption'
+>
 export type ExtraSavePreparedInlineMessage = MakeExtra<
   'savePreparedInlineMessage',
   'user_id' | 'result'
@@ -130,6 +142,12 @@ export type ExtraSetUserEmojiStatus = MakeExtra<'setUserEmojiStatus', 'user_id'>
 export type ExtraLocation = MakeExtra<'sendLocation', 'latitude' | 'longitude'>
 export type ExtraMediaGroup = MakeExtra<'sendMediaGroup', 'media'>
 export type ExtraPhoto = MakeExtra<'sendPhoto', 'photo'>
+export type ExtraLivePhoto = MakeExtra<'sendLivePhoto', 'live_photo' | 'photo'>
+export type ExtraRichMessage = MakeExtra<'sendRichMessage', 'rich_message'>
+export type ExtraSendRichMessageDraft = MakeExtra<
+  'sendRichMessageDraft',
+  'draft_id' | 'rich_message'
+>
 export type ExtraPoll = MakeExtra<'sendPoll', 'question' | 'options' | 'type'>
 export type ExtraSendChecklist = MakeExtra<'sendChecklist', 'checklist'>
 export type ExtraEditMessageChecklist = MakeExtra<
@@ -137,6 +155,17 @@ export type ExtraEditMessageChecklist = MakeExtra<
   'business_connection_id' | 'message_id' | 'checklist'
 >
 export type ExtraPromoteChatMember = MakeExtra<'promoteChatMember', 'user_id'>
+export type ExtraGetChatAdministrators = MakeExtra<'getChatAdministrators'>
+export type ExtraDeleteMessageReaction = MakeExtra<
+  'deleteMessageReaction',
+  'message_id'
+>
+export type ExtraDeleteAllMessageReactions =
+  MakeExtra<'deleteAllMessageReactions'>
+export type ExtraSetManagedBotAccessSettings = MakeExtra<
+  'setManagedBotAccessSettings',
+  'user_id' | 'is_access_restricted'
+>
 export type ExtraReplyMessage = MakeExtra<'sendMessage', 'text'>
 export type ExtraForwardMessage = MakeExtra<
   'forwardMessage',
@@ -213,14 +242,15 @@ export type ExtraEditStory = MakeExtra<
 >
 
 export type MediaGroup =
-  | readonly (InputMediaPhoto | InputMediaVideo)[]
+  | readonly (InputMediaPhoto | InputMediaVideo | InputMediaLivePhoto)[]
   | readonly InputMediaAudio[]
   | readonly InputMediaDocument[]
 
 export type PaidMediaGroup =
-  | (InputPaidMediaPhoto | InputPaidMediaVideo)[]
+  | (InputPaidMediaPhoto | InputPaidMediaVideo | InputPaidMediaLivePhoto)[]
   | InputPaidMediaPhoto[]
   | InputPaidMediaVideo[]
+  | InputPaidMediaLivePhoto[]
 
 // types used for inference of ctx object
 

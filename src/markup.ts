@@ -1,12 +1,12 @@
+import { is2D } from './core/helpers/check'
 import {
   ForceReply,
-  InlineKeyboardButton,
-  InlineKeyboardMarkup,
   KeyboardButton,
   ReplyKeyboardMarkup,
   ReplyKeyboardRemove,
+  InlineKeyboardButton,
+  InlineKeyboardMarkup,
 } from './core/types/typegram'
-import { is2D } from './core/helpers/check'
 
 type Hideable<B> = B & { hide?: boolean }
 type HideableKBtn = Hideable<KeyboardButton>
@@ -57,6 +57,14 @@ export class Markup<
       ...this.reply_markup,
       is_persistent: value,
     })
+  }
+
+  /** Also shows the reply interface, as if the user tapped 'Reply' on the message */
+  forceReply<T extends InlineKeyboardMarkup | ReplyKeyboardMarkup>(
+    this: Markup<T>,
+    value = true
+  ) {
+    return new Markup<T>({ ...this.reply_markup, force_reply: value })
   }
 }
 

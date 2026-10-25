@@ -3,6 +3,7 @@ import {
   InlineKeyboardButton,
   KeyboardButtonRequestChat,
   KeyboardButtonRequestUsers,
+  KeyboardButtonRequestManagedBot,
 } from './core/types/typegram'
 
 type Hideable<B> = B & { hide: boolean }
@@ -106,6 +107,21 @@ export function channelRequest(
   }
 }
 
+/** Asks the user to create a bot that will be managed by the current bot */
+export function managedBotRequest(
+  text: string,
+  /** Must fit in a signed 32 bit int */
+  request_id: number,
+  extra?: Omit<KeyboardButtonRequestManagedBot, 'request_id'>,
+  hide = false
+): Hideable<KeyboardButton.RequestManagedBot> {
+  return {
+    text,
+    request_managed_bot: { request_id, ...extra },
+    hide,
+  }
+}
+
 export function url(
   text: string,
   url: string,
@@ -171,6 +187,15 @@ export function pay(
   extra?: Pick<InlineKeyboardButton.Pay, 'style' | 'icon_custom_emoji_id'>
 ): Hideable<InlineKeyboardButton.Pay> {
   return { text, pay: true, hide, ...extra }
+}
+
+/** A button that is shown but does nothing when pressed */
+export function disabled(
+  text: string,
+  hide = false,
+  extra?: Pick<InlineKeyboardButton.Disabled, 'style' | 'icon_custom_emoji_id'>
+): Hideable<InlineKeyboardButton.Disabled> {
+  return { text, disabled: {}, hide, ...extra }
 }
 
 export function login(

@@ -1,9 +1,10 @@
 import type {
+  Update,
+  Message,
   CallbackQuery,
   CommonMessageBundle,
-  Message,
-  Update,
 } from '@tgify/types'
+
 import { DistinctKeys, KeyedDistinct, Guarded } from './core/helpers/util'
 
 export type Filter<U extends Update> = (update: Update) => update is U
@@ -72,6 +73,20 @@ export const editedBusinessMessage =
     if (!('edited_business_message' in update)) return false
     for (const key of keys) {
       if (!(key in update.edited_business_message)) return false
+    }
+    return true
+  }
+
+export const guestMessage =
+  <Ks extends DistinctKeys<Message>[]>(...keys: Ks) =>
+  (
+    update: Update
+  ): update is Update.GuestMessageUpdate<
+    KeyedDistinct<Message, Ks[number]>
+  > => {
+    if (!('guest_message' in update)) return false
+    for (const key of keys) {
+      if (!(key in update.guest_message)) return false
     }
     return true
   }

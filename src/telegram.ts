@@ -1,10 +1,11 @@
-import * as tg from './core/types/typegram'
-import * as tt from './telegram-types'
-import ApiClient from './core/network/client'
 import { isAbsolute } from 'path'
 import { URL } from 'url'
-import { FmtString } from './format'
+
 import { fmtCaption } from './core/helpers/util'
+import ApiClient from './core/network/client'
+import * as tg from './core/types/typegram'
+import * as tt from './telegram-types'
+import { FmtString } from './format'
 
 export class Telegram extends ApiClient {
   /**
@@ -141,6 +142,24 @@ export class Telegram extends ApiClient {
   }
 
   /**
+   * Use this method to send rich messages. If the message contains a block with a media element, then the bot must have the right to send the media to the chat. On success, the sent Message is returned.
+   * @param chatId Unique identifier for the target chat or username of the target bot, supergroup or channel (in the format @username)
+   * @param richMessage The message to be sent
+   * @see https://core.telegram.org/bots/api#sendrichmessage
+   */
+  sendRichMessage(
+    chatId: number | string,
+    richMessage: tg.InputRichMessage,
+    extra?: tt.ExtraRichMessage
+  ) {
+    return this.callApi('sendRichMessage', {
+      chat_id: chatId,
+      rich_message: richMessage,
+      ...extra,
+    })
+  }
+
+  /**
    * Forward existing message.
    * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
    * @param fromChatId Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
@@ -181,13 +200,15 @@ export class Telegram extends ApiClient {
   }
 
   /**
-   * Use this method to stream a partial message to a user while the message is being generated; supported only for bots with forum topic mode enabled. Returns True on success.
+   * Use this method to stream a partial message to a user while the message is being generated. The draft is a temporary 30-second preview: once the output is finalized, send the complete message with sendMessage. Returns True on success.
    * @param chatId Unique identifier for the target private chat
    * @param draftId Unique identifier of the message draft; must be non-zero. Changes of drafts with the same identifier are animated
-   * @param text Text of the message to be sent, 1-4096 characters after entities parsing
+   * @param text Text of the message to be sent, 0-4096 characters after entities parsing. Pass an empty text to show a “Thinking…” placeholder
    * @param extra.message_thread_id Unique identifier for the target message thread
    * @param extra.parse_mode Mode for parsing entities in the message text. See formatting options for more details.
    * @param extra.entities A JSON-serialized list of special entities that appear in message text, which can be specified instead of parse_mode
+   * @param extra.can_stop Pass True to show the user a button to stop further drafts; the bot will receive a stopped_message_generation update
+   * @param extra.keep_on_stop Pass True to keep the draft in the chat when the stop button is pressed
    * @see https://core.telegram.org/bots/api#sendmessagedraft
    */
   sendMessageDraft(
@@ -200,6 +221,30 @@ export class Telegram extends ApiClient {
       text,
       chat_id: chatId,
       draft_id: draftId,
+      ...extra,
+    })
+  }
+
+  /**
+   * Use this method to stream a partial rich message to a user while the message is being generated. The draft is a temporary 30-second preview: once the output is finalized, send the complete message with sendRichMessage. Returns True on success.
+   * @param chatId Unique identifier for the target private chat
+   * @param draftId Unique identifier of the message draft; must be non-zero. Changes of drafts with the same identifier are animated
+   * @param richMessage The partial message to be streamed. Direct upload of new files and explicit upload of files by a URL isn't supported
+   * @param extra.message_thread_id Unique identifier for the target message thread
+   * @param extra.can_stop Pass True to show the user a button to stop further drafts; the bot will receive a stopped_message_generation update
+   * @param extra.keep_on_stop Pass True to keep the draft in the chat when the stop button is pressed
+   * @see https://core.telegram.org/bots/api#sendrichmessagedraft
+   */
+  sendRichMessageDraft(
+    chatId: number,
+    draftId: number,
+    richMessage: tg.InputRichMessage,
+    extra?: tt.ExtraSendRichMessageDraft
+  ) {
+    return this.callApi('sendRichMessageDraft', {
+      chat_id: chatId,
+      draft_id: draftId,
+      rich_message: richMessage,
       ...extra,
     })
   }
@@ -244,6 +289,43 @@ export class Telegram extends ApiClient {
   }
 
   /**
+   * Use this method to remove a reaction from a message in a group or a supergroup chat. The bot must have the 'can_delete_messages' administrator right in the chat. Returns True on success.
+   * @param chatId Unique identifier for the target chat or username of the target supergroup (in the format @username)
+   * @param messageId Identifier of the target message
+   * @param extra.user_id Identifier of the user whose reaction will be removed, if the reaction was added by a user
+   * @param extra.actor_chat_id Identifier of the chat whose reaction will be removed, if the reaction was added by a chat
+   * @see https://core.telegram.org/bots/api#deletemessagereaction
+   */
+  deleteMessageReaction(
+    chatId: number | string,
+    messageId: number,
+    extra?: tt.ExtraDeleteMessageReaction
+  ) {
+    return this.callApi('deleteMessageReaction', {
+      chat_id: chatId,
+      message_id: messageId,
+      ...extra,
+    })
+  }
+
+  /**
+   * Use this method to remove up to 10000 recent reactions in a group or a supergroup chat added by a given user or chat. The bot must have the 'can_delete_messages' administrator right in the chat. Returns True on success.
+   * @param chatId Unique identifier for the target chat or username of the target supergroup (in the format @username)
+   * @param extra.user_id Identifier of the user whose reactions will be removed, if the reactions were added by a user
+   * @param extra.actor_chat_id Identifier of the chat whose reactions will be removed, if the reactions were added by a chat
+   * @see https://core.telegram.org/bots/api#deleteallmessagereactions
+   */
+  deleteAllMessageReactions(
+    chatId: number | string,
+    extra: tt.ExtraDeleteAllMessageReactions
+  ) {
+    return this.callApi('deleteAllMessageReactions', {
+      chat_id: chatId,
+      ...extra,
+    })
+  }
+
+  /**
    * Use this method to get a list of profile pictures for a user. Returns a UserProfilePhotos object.
    * @param userId Unique identifier of the target user
    * @param offset Sequential number of the first photo to be returned. By default, all photos are returned.
@@ -267,6 +349,19 @@ export class Telegram extends ApiClient {
    */
   getUserProfileAudios(userId: number, extra?: tt.ExtraGetUserProfileAudios) {
     return this.callApi('getUserProfileAudios', { user_id: userId, ...extra })
+  }
+
+  /**
+   * Use this method to get the last messages from the personal chat (i.e., the chat currently added to their profile) of a given user. On success, an Array of Message objects is returned.
+   * @param userId Unique identifier for the target user
+   * @param limit The maximum number of messages to return; 1-20
+   * @see https://core.telegram.org/bots/api#getuserpersonalchatmessages
+   */
+  getUserPersonalChatMessages(userId: number, limit: number) {
+    return this.callApi('getUserPersonalChatMessages', {
+      user_id: userId,
+      limit,
+    })
   }
 
   /**
@@ -354,6 +449,27 @@ export class Telegram extends ApiClient {
   ) {
     return this.callApi('sendPhoto', {
       chat_id: chatId,
+      photo,
+      ...fmtCaption(extra),
+    })
+  }
+
+  /**
+   * Use this method to send live photos. On success, the sent Message is returned.
+   * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param livePhoto Live photo video to send. The video must be no longer than 10 seconds and must not exceed 10 MB in size
+   * @param photo The static photo to send
+   * @see https://core.telegram.org/bots/api#sendlivephoto
+   */
+  sendLivePhoto(
+    chatId: number | string,
+    livePhoto: tg.Opts<'sendLivePhoto'>['live_photo'],
+    photo: tg.Opts<'sendLivePhoto'>['photo'],
+    extra?: tt.ExtraLivePhoto
+  ) {
+    return this.callApi('sendLivePhoto', {
+      chat_id: chatId,
+      live_photo: livePhoto,
       photo,
       ...fmtCaption(extra),
     })
@@ -526,8 +642,8 @@ export class Telegram extends ApiClient {
   /**
    * Send a native poll.
    * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-   * @param question Poll question, 1-255 characters
-   * @param options A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
+   * @param question Poll question, 1-300 characters
+   * @param options A JSON-serialized list of 1-12 answer options
    */
   sendPoll(
     chatId: number | string,
@@ -540,7 +656,7 @@ export class Telegram extends ApiClient {
       type: 'regular',
       question,
       options,
-      ...extra,
+      ...withCorrectOptionIds(extra),
     })
   }
 
@@ -573,8 +689,9 @@ export class Telegram extends ApiClient {
   /**
    * Send a native quiz.
    * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-   * @param question Poll question, 1-255 characters
-   * @param options A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
+   * @param question Poll question, 1-300 characters
+   * @param options A JSON-serialized list of 1-12 answer options
+   * @param extra.correct_option_ids Identifiers of the correct answer options in increasing order; the deprecated `correct_option_id` is still accepted
    */
   sendQuiz(
     chatId: number | string,
@@ -587,7 +704,7 @@ export class Telegram extends ApiClient {
       type: 'quiz',
       question,
       options,
-      ...extra,
+      ...withCorrectOptionIds(extra),
     })
   }
 
@@ -655,9 +772,13 @@ export class Telegram extends ApiClient {
 
   /**
    * @param chatId Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+   * @param extra.return_bots Pass True to additionally receive all bots that are administrators of the chat. By default, bots other than the current bot aren't returned
    */
-  getChatAdministrators(chatId: number | string) {
-    return this.callApi('getChatAdministrators', { chat_id: chatId })
+  getChatAdministrators(
+    chatId: number | string,
+    extra?: tt.ExtraGetChatAdministrators
+  ) {
+    return this.callApi('getChatAdministrators', { chat_id: chatId, ...extra })
   }
 
   /**
@@ -775,6 +896,21 @@ export class Telegram extends ApiClient {
       chat_id: chatId,
       user_id: userId,
       custom_title: title,
+    })
+  }
+
+  /**
+   * Use this method to set a tag for a regular member in a group or a supergroup. The bot must be an administrator in the chat for this to work and must have the can_manage_tags administrator right. Returns True on success.
+   * @param chatId Unique identifier for the target chat or username of the target supergroup (in the format @username)
+   * @param userId Unique identifier of the target user
+   * @param tag New tag for the member; 0-16 characters, emoji are not allowed. Omit to remove the tag
+   * @see https://core.telegram.org/bots/api#setchatmembertag
+   */
+  setChatMemberTag(chatId: number | string, userId: number, tag?: string) {
+    return this.callApi('setChatMemberTag', {
+      chat_id: chatId,
+      user_id: userId,
+      tag,
     })
   }
 
@@ -1030,6 +1166,19 @@ export class Telegram extends ApiClient {
   }
 
   /**
+   * Use this method to reply to a received guest message. On success, a SentGuestMessage object is returned.
+   * @param guestQueryId Unique identifier for the query to be answered, from Message.guest_query_id
+   * @param result A JSON-serialized object describing the message to be sent
+   * @see https://core.telegram.org/bots/api#answerguestquery
+   */
+  answerGuestQuery(guestQueryId: string, result: tg.InlineQueryResult) {
+    return this.callApi('answerGuestQuery', {
+      result,
+      guest_query_id: guestQueryId,
+    })
+  }
+
+  /**
    * Stores a message that can be sent by a user of a Mini App. Returns a PreparedInlineMessage object.
    * @param userId Unique identifier of the target user that can use the prepared message
    * @param result A JSON-serialized object describing the message to be sent
@@ -1047,6 +1196,19 @@ export class Telegram extends ApiClient {
       result,
       user_id: userId,
       ...extra,
+    })
+  }
+
+  /**
+   * Stores a keyboard button that can be used by a user within a Mini App. Returns a PreparedKeyboardButton object.
+   * @param userId Unique identifier of the target user that can use the button
+   * @param button A JSON-serialized object describing the button to be saved. The button must be of the type request_users, request_chat, or request_managed_bot
+   * @see https://core.telegram.org/bots/api#savepreparedkeyboardbutton
+   */
+  savePreparedKeyboardButton(userId: number, button: tg.KeyboardButton) {
+    return this.callApi('savePreparedKeyboardButton', {
+      button,
+      user_id: userId,
     })
   }
 
@@ -1106,16 +1268,17 @@ export class Telegram extends ApiClient {
    * @param chatId Required if inlineMessageId is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
    * @param messageId Required if inlineMessageId is not specified. Identifier of the sent message
    * @param inlineMessageId Required if chatId and messageId are not specified. Identifier of the inline message
-   * @param text New text of the message
+   * @param text New text of the message; may be omitted when `extra.rich_message` is passed
+   * @param extra.rich_message New rich content of the message
    */
   editMessageText(
     chatId: number | string | undefined,
     messageId: number | undefined,
     inlineMessageId: string | undefined,
-    text: string | FmtString,
+    text: string | FmtString | undefined,
     extra?: tt.ExtraEditMessageText
   ) {
-    const t = FmtString.normalise(text)
+    const t = text === undefined ? undefined : FmtString.normalise(text)
     return this.callApi('editMessageText', {
       chat_id: chatId,
       message_id: messageId,
@@ -1260,6 +1423,102 @@ export class Telegram extends ApiClient {
   }
 
   /**
+   * Use this method to edit an ephemeral text or rich message. It is not guaranteed that the user will receive the edit, especially if they are offline. On success, True is returned.
+   * @param chatId Unique identifier for the target chat or username of the target supergroup (in the format @username)
+   * @param receiverUserId Identifier of the user who received the message
+   * @param ephemeralMessageId Identifier of the ephemeral message to edit
+   * @param text New text of the message; may be omitted when `extra.rich_message` is passed
+   * @param extra.rich_message New rich content of the message
+   * @see https://core.telegram.org/bots/api#editephemeralmessagetext
+   */
+  editEphemeralMessageText(
+    chatId: number | string,
+    receiverUserId: number,
+    ephemeralMessageId: number,
+    text: string | FmtString | undefined,
+    extra?: tt.ExtraEditEphemeralMessageText
+  ) {
+    const t = text === undefined ? undefined : FmtString.normalise(text)
+    return this.callApi('editEphemeralMessageText', {
+      chat_id: chatId,
+      receiver_user_id: receiverUserId,
+      ephemeral_message_id: ephemeralMessageId,
+      ...extra,
+      ...t,
+    })
+  }
+
+  /**
+   * Use this method to edit the media of an ephemeral message. It is not guaranteed that the user will receive the edit, especially if they are offline. On success, True is returned.
+   * @param chatId Unique identifier for the target chat or username of the target supergroup (in the format @username)
+   * @param receiverUserId Identifier of the user who received the message
+   * @param ephemeralMessageId Identifier of the ephemeral message to edit
+   * @param media New media content of the message
+   * @see https://core.telegram.org/bots/api#editephemeralmessagemedia
+   */
+  editEphemeralMessageMedia(
+    chatId: number | string,
+    receiverUserId: number,
+    ephemeralMessageId: number,
+    media: tt.WrapCaption<tg.InputMedia>,
+    extra?: tt.ExtraEditEphemeralMessageMedia
+  ) {
+    return this.callApi('editEphemeralMessageMedia', {
+      chat_id: chatId,
+      receiver_user_id: receiverUserId,
+      ephemeral_message_id: ephemeralMessageId,
+      media: fmtCaption(media),
+      ...extra,
+    })
+  }
+
+  /**
+   * Use this method to edit the caption of an ephemeral message. It is not guaranteed that the user will receive the edit, especially if they are offline. On success, True is returned.
+   * @param chatId Unique identifier for the target chat or username of the target supergroup (in the format @username)
+   * @param receiverUserId Identifier of the user who received the message
+   * @param ephemeralMessageId Identifier of the ephemeral message to edit
+   * @param caption New caption of the message, 0-1024 characters after entities parsing
+   * @see https://core.telegram.org/bots/api#editephemeralmessagecaption
+   */
+  editEphemeralMessageCaption(
+    chatId: number | string,
+    receiverUserId: number,
+    ephemeralMessageId: number,
+    caption: string | FmtString | undefined,
+    extra?: tt.ExtraEditEphemeralMessageCaption
+  ) {
+    return this.callApi('editEphemeralMessageCaption', {
+      chat_id: chatId,
+      receiver_user_id: receiverUserId,
+      ephemeral_message_id: ephemeralMessageId,
+      ...extra,
+      ...fmtCaption({ caption }),
+    })
+  }
+
+  /**
+   * Use this method to edit only the reply markup of an ephemeral message. It is not guaranteed that the user will receive the edit, especially if they are offline. On success, True is returned.
+   * @param chatId Unique identifier for the target chat or username of the target supergroup (in the format @username)
+   * @param receiverUserId Identifier of the user who received the message
+   * @param ephemeralMessageId Identifier of the ephemeral message to edit
+   * @param markup A JSON-serialized object for an inline keyboard
+   * @see https://core.telegram.org/bots/api#editephemeralmessagereplymarkup
+   */
+  editEphemeralMessageReplyMarkup(
+    chatId: number | string,
+    receiverUserId: number,
+    ephemeralMessageId: number,
+    markup: tg.InlineKeyboardMarkup | undefined
+  ) {
+    return this.callApi('editEphemeralMessageReplyMarkup', {
+      chat_id: chatId,
+      receiver_user_id: receiverUserId,
+      ephemeral_message_id: ephemeralMessageId,
+      reply_markup: markup,
+    })
+  }
+
+  /**
    * Delete a message, including service messages, with the following limitations:
    * - A message can only be deleted if it was sent less than 48 hours ago.
    * - Bots can delete outgoing messages in groups and supergroups.
@@ -1285,6 +1544,25 @@ export class Telegram extends ApiClient {
     return this.callApi('deleteMessages', {
       chat_id: chatId,
       message_ids: messageIds,
+    })
+  }
+
+  /**
+   * Use this method to delete an ephemeral message. It is not guaranteed that the user will receive the deletion, especially if they are offline. Returns True on success.
+   * @param chatId Unique identifier for the target chat or username of the target supergroup (in the format @username)
+   * @param receiverUserId Identifier of the user who received the message
+   * @param ephemeralMessageId Identifier of the ephemeral message to delete
+   * @see https://core.telegram.org/bots/api#deleteephemeralmessage
+   */
+  deleteEphemeralMessage(
+    chatId: number | string,
+    receiverUserId: number,
+    ephemeralMessageId: number
+  ) {
+    return this.callApi('deleteEphemeralMessage', {
+      chat_id: chatId,
+      receiver_user_id: receiverUserId,
+      ephemeral_message_id: ephemeralMessageId,
     })
   }
 
@@ -1807,6 +2085,35 @@ export class Telegram extends ApiClient {
     return this.callApi('declineChatJoinRequest', {
       chat_id: chatId,
       user_id: userId,
+    })
+  }
+
+  /**
+   * Use this method to process a received chat join request query. Returns True on success.
+   * @param queryId Unique identifier of the join request query, from ChatJoinRequest.query_id
+   * @param result “approve” to allow the user to join the chat, “decline” to disallow, or “queue” to leave the request for chat administrators
+   * @see https://core.telegram.org/bots/api#answerchatjoinrequestquery
+   */
+  answerChatJoinRequestQuery(
+    queryId: string,
+    result: tg.Opts<'answerChatJoinRequestQuery'>['result']
+  ) {
+    return this.callApi('answerChatJoinRequestQuery', {
+      result,
+      chat_join_request_query_id: queryId,
+    })
+  }
+
+  /**
+   * Use this method to process a received chat join request query by showing a Mini App to the user before deciding the outcome. Call answerChatJoinRequestQuery to resolve the query based on the user's interaction with the Mini App. Returns True on success.
+   * @param queryId Unique identifier of the join request query, from ChatJoinRequest.query_id
+   * @param webAppUrl An HTTPS URL of a Web App to be opened
+   * @see https://core.telegram.org/bots/api#sendchatjoinrequestwebapp
+   */
+  sendChatJoinRequestWebApp(queryId: string, webAppUrl: string) {
+    return this.callApi('sendChatJoinRequestWebApp', {
+      web_app_url: webAppUrl,
+      chat_join_request_query_id: queryId,
     })
   }
 
@@ -2370,6 +2677,52 @@ export class Telegram extends ApiClient {
   }
 
   /**
+   * Use this method to get the token of a managed bot. Returns the token as String on success.
+   * @param userId User identifier of the managed bot whose token will be returned
+   * @see https://core.telegram.org/bots/api#getmanagedbottoken
+   */
+  getManagedBotToken(userId: number) {
+    return this.callApi('getManagedBotToken', { user_id: userId })
+  }
+
+  /**
+   * Use this method to revoke the current token of a managed bot and generate a new one. Returns the new token as String on success.
+   * @param userId User identifier of the managed bot whose token will be replaced
+   * @see https://core.telegram.org/bots/api#replacemanagedbottoken
+   */
+  replaceManagedBotToken(userId: number) {
+    return this.callApi('replaceManagedBotToken', { user_id: userId })
+  }
+
+  /**
+   * Use this method to get the access settings of a managed bot. Returns a BotAccessSettings object on success.
+   * @param userId User identifier of the managed bot whose access settings will be returned
+   * @see https://core.telegram.org/bots/api#getmanagedbotaccesssettings
+   */
+  getManagedBotAccessSettings(userId: number) {
+    return this.callApi('getManagedBotAccessSettings', { user_id: userId })
+  }
+
+  /**
+   * Use this method to change the access settings of a managed bot. Returns True on success.
+   * @param userId User identifier of the managed bot whose access settings will be changed
+   * @param isAccessRestricted Pass True if only selected users can access the bot. The bot's owner can always access it
+   * @param extra.added_user_ids Up to 10 identifiers of users who will have access to the bot in addition to its owner
+   * @see https://core.telegram.org/bots/api#setmanagedbotaccesssettings
+   */
+  setManagedBotAccessSettings(
+    userId: number,
+    isAccessRestricted: boolean,
+    extra?: tt.ExtraSetManagedBotAccessSettings
+  ) {
+    return this.callApi('setManagedBotAccessSettings', {
+      user_id: userId,
+      is_access_restricted: isAccessRestricted,
+      ...extra,
+    })
+  }
+
+  /**
    * Log out from the cloud Bot API server before launching the bot locally.
    */
   logOut() {
@@ -2381,6 +2734,16 @@ export class Telegram extends ApiClient {
    */
   close() {
     return this.callApi('close', {})
+  }
+}
+
+/** The Bot API replaced `correct_option_id` with `correct_option_ids`; the old field is still accepted */
+function withCorrectOptionIds(extra?: tt.ExtraPoll) {
+  if (extra?.correct_option_id === undefined) return extra
+  const { correct_option_id, ...rest } = extra
+  return {
+    ...rest,
+    correct_option_ids: rest.correct_option_ids ?? [correct_option_id],
   }
 }
 

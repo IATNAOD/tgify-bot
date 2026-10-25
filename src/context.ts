@@ -1,12 +1,13 @@
+import d from 'debug'
+
+import { Deunionize, PropOr, UnionKeys } from './core/helpers/deunionize'
+import { Guard, Guarded, Keyed, MaybeArray } from './core/helpers/util'
+import { Digit, MessageReactions } from './reactions'
+import ApiClient from './core/network/client'
 import * as tg from './core/types/typegram'
 import * as tt from './telegram-types'
-import { Deunionize, PropOr, UnionKeys } from './core/helpers/deunionize'
-import ApiClient from './core/network/client'
-import { Guard, Guarded, Keyed, MaybeArray } from './core/helpers/util'
-import Telegram from './telegram'
 import { FmtString } from './format'
-import d from 'debug'
-import { Digit, MessageReactions } from './reactions'
+import Telegram from './telegram'
 
 const debug = d('tgify:context')
 
@@ -174,9 +175,28 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
     return this.update.removed_chat_boost as PropOr<U, 'removed_chat_boost'>
   }
 
+  get guestMessage() {
+    return this.update.guest_message as PropOr<U, 'guest_message'>
+  }
+
+  get managedBot() {
+    return this.update.managed_bot as PropOr<U, 'managed_bot'>
+  }
+
+  get subscription() {
+    return this.update.subscription as PropOr<U, 'subscription'>
+  }
+
+  get stoppedMessageGeneration() {
+    return this.update.stopped_message_generation as PropOr<
+      U,
+      'stopped_message_generation'
+    >
+  }
+
   /** Shorthand for any `message` object present in the current update. One of
    * `message`, `edited_message`, `business_message`, `edited_business_message`
-     `deleted_business_messages`, `channel_post`, `edited_channel_post` or * `callback_query.message`
+     `deleted_business_messages`, `guest_message`, `channel_post`, `edited_channel_post` or * `callback_query.message`
    */
   get msg() {
     return getMessageFromAnySource(this) as GetMsg<U> & Msg
@@ -195,7 +215,8 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
       this.chatJoinRequest ??
       this.chatMember ??
       this.myChatMember ??
-      this.removedChatBoost
+      this.removedChatBoost ??
+      this.stoppedMessageGeneration
     )?.chat as Getter<U, 'chat'>
   }
 
@@ -335,6 +356,19 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   /**
+   * Replies to the guest message of the current update
+   * @see https://core.telegram.org/bots/api#answerguestquery
+   */
+  answerGuestQuery(...args: Shorthand<'answerGuestQuery'>) {
+    const msg = this.msg
+    const guestQueryId = msg?.has('guest_query_id')
+      ? msg.guest_query_id
+      : undefined
+    this.assert(guestQueryId, 'answerGuestQuery')
+    return this.telegram.answerGuestQuery(guestQueryId, ...args)
+  }
+
+  /**
    * Shorthand for {@link Telegram.getUserChatBoosts}
    */
   getUserChatBoosts() {
@@ -396,7 +430,10 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   /**
    * @see https://core.telegram.org/bots/api#editmessagetext
    */
-  editMessageText(text: string | FmtString, extra?: tt.ExtraEditMessageText) {
+  editMessageText(
+    text: string | FmtString | undefined,
+    extra?: tt.ExtraEditMessageText
+  ) {
     this.assert(this.msgId ?? this.inlineMessageId, 'editMessageText')
     return this.telegram.editMessageText(
       this.chat?.id,
@@ -511,6 +548,59 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   /**
+   * Edits the ephemeral message of the current update, e.g. the one whose button was pressed
+   * @see https://core.telegram.org/bots/api#editephemeralmessagetext
+   */
+  editEphemeralMessageText(
+    text: string | FmtString | undefined,
+    extra?: tt.ExtraEditEphemeralMessageText
+  ) {
+    const ephemeral = getEphemeralMessage(this)
+    this.assert(ephemeral, 'editEphemeralMessageText')
+    return this.telegram.editEphemeralMessageText(...ephemeral, text, extra)
+  }
+
+  /**
+   * Edits the media of the ephemeral message of the current update
+   * @see https://core.telegram.org/bots/api#editephemeralmessagemedia
+   */
+  editEphemeralMessageMedia(
+    media: tt.WrapCaption<tg.InputMedia>,
+    extra?: tt.ExtraEditEphemeralMessageMedia
+  ) {
+    const ephemeral = getEphemeralMessage(this)
+    this.assert(ephemeral, 'editEphemeralMessageMedia')
+    return this.telegram.editEphemeralMessageMedia(...ephemeral, media, extra)
+  }
+
+  /**
+   * Edits the caption of the ephemeral message of the current update
+   * @see https://core.telegram.org/bots/api#editephemeralmessagecaption
+   */
+  editEphemeralMessageCaption(
+    caption: string | FmtString | undefined,
+    extra?: tt.ExtraEditEphemeralMessageCaption
+  ) {
+    const ephemeral = getEphemeralMessage(this)
+    this.assert(ephemeral, 'editEphemeralMessageCaption')
+    return this.telegram.editEphemeralMessageCaption(
+      ...ephemeral,
+      caption,
+      extra
+    )
+  }
+
+  /**
+   * Edits the reply markup of the ephemeral message of the current update
+   * @see https://core.telegram.org/bots/api#editephemeralmessagereplymarkup
+   */
+  editEphemeralMessageReplyMarkup(markup: tg.InlineKeyboardMarkup | undefined) {
+    const ephemeral = getEphemeralMessage(this)
+    this.assert(ephemeral, 'editEphemeralMessageReplyMarkup')
+    return this.telegram.editEphemeralMessageReplyMarkup(...ephemeral, markup)
+  }
+
+  /**
    * @see https://core.telegram.org/bots/api#sendmessage
    */
   sendMessage(text: string | FmtString, extra?: tt.ExtraReplyMessage) {
@@ -526,6 +616,27 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
    */
   reply(...args: Shorthand<'sendMessage'>) {
     return this.sendMessage(...args)
+  }
+
+  /**
+   * @see https://core.telegram.org/bots/api#sendrichmessage
+   */
+  sendRichMessage(
+    richMessage: tg.InputRichMessage,
+    extra?: tt.ExtraRichMessage
+  ) {
+    this.assert(this.chat, 'sendRichMessage')
+    return this.telegram.sendRichMessage(this.chat.id, richMessage, {
+      message_thread_id: getThreadId(this),
+      ...extra,
+    })
+  }
+
+  /**
+   * @see https://core.telegram.org/bots/api#sendrichmessage
+   */
+  replyWithRichMessage(...args: Shorthand<'sendRichMessage'>) {
+    return this.sendRichMessage(...args)
   }
 
   /**
@@ -626,6 +737,14 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   promoteChatMember(...args: Shorthand<'promoteChatMember'>) {
     this.assert(this.chat, 'promoteChatMember')
     return this.telegram.promoteChatMember(this.chat.id, ...args)
+  }
+
+  /**
+   * @see https://core.telegram.org/bots/api#setchatmembertag
+   */
+  setChatMemberTag(...args: Shorthand<'setChatMemberTag'>) {
+    this.assert(this.chat, 'setChatMemberTag')
+    return this.telegram.setChatMemberTag(this.chat.id, ...args)
   }
 
   /**
@@ -758,6 +877,28 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
    */
   replyWithPhoto(...args: Shorthand<'sendPhoto'>) {
     return this.sendPhoto(...args)
+  }
+
+  /**
+   * @see https://core.telegram.org/bots/api#sendlivephoto
+   */
+  sendLivePhoto(
+    livePhoto: string | tg.InputFile,
+    photo: string | tg.InputFile,
+    extra?: tt.ExtraLivePhoto
+  ) {
+    this.assert(this.chat, 'sendLivePhoto')
+    return this.telegram.sendLivePhoto(this.chat.id, livePhoto, photo, {
+      message_thread_id: getThreadId(this),
+      ...extra,
+    })
+  }
+
+  /**
+   * @see https://core.telegram.org/bots/api#sendlivephoto
+   */
+  replyWithLivePhoto(...args: Shorthand<'sendLivePhoto'>) {
+    return this.sendLivePhoto(...args)
   }
 
   /**
@@ -1174,6 +1315,33 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
       reactions,
       is_big
     )
+  }
+
+  /**
+   * Shorthand for {@link Telegram.deleteMessageReaction} on the current message.
+   * In a `message_reaction` update, removes the reaction of its user or chat unless `extra` names another one.
+   * @see https://core.telegram.org/bots/api#deletemessagereaction
+   */
+  deleteMessageReaction(extra?: tt.ExtraDeleteMessageReaction) {
+    this.assert(this.chat, 'deleteMessageReaction')
+    this.assert(this.msgId, 'deleteMessageReaction')
+    const reaction = this.messageReaction
+    return this.telegram.deleteMessageReaction(
+      this.chat.id,
+      this.msgId,
+      extra ?? {
+        user_id: reaction?.user?.id,
+        actor_chat_id: reaction?.actor_chat?.id,
+      }
+    )
+  }
+
+  /**
+   * @see https://core.telegram.org/bots/api#deleteallmessagereactions
+   */
+  deleteAllMessageReactions(...args: Shorthand<'deleteAllMessageReactions'>) {
+    this.assert(this.chat, 'deleteAllMessageReactions')
+    return this.telegram.deleteAllMessageReactions(this.chat.id, ...args)
   }
 
   /**
@@ -1605,6 +1773,16 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   /**
+   * Deletes the ephemeral message of the current update
+   * @see https://core.telegram.org/bots/api#deleteephemeralmessage
+   */
+  deleteEphemeralMessage() {
+    const ephemeral = getEphemeralMessage(this)
+    this.assert(ephemeral, 'deleteEphemeralMessage')
+    return this.telegram.deleteEphemeralMessage(...ephemeral)
+  }
+
+  /**
    * @see https://core.telegram.org/bots/api#forwardmessage
    */
   forwardMessage(
@@ -1654,6 +1832,23 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   }
 
   /**
+   * @see https://core.telegram.org/bots/api#sendrichmessagedraft
+   */
+  sendRichMessageDraft(
+    draftId: number,
+    richMessage: tg.InputRichMessage,
+    extra?: tt.ExtraSendRichMessageDraft
+  ) {
+    this.assert(this.chat, 'sendRichMessageDraft')
+    return this.telegram.sendRichMessageDraft(
+      this.chat.id,
+      draftId,
+      richMessage,
+      extra
+    )
+  }
+
+  /**
    * @see https://core.telegram.org/bots/api#copymessage
    */
   copyMessage(chatId: string | number, extra?: tt.ExtraCopyMessage) {
@@ -1690,6 +1885,26 @@ export class Context<U extends Deunionize<tg.Update> = tg.Update> {
   declineChatJoinRequest(userId: number) {
     this.assert(this.chat, 'declineChatJoinRequest')
     return this.telegram.declineChatJoinRequest(this.chat.id, userId)
+  }
+
+  /**
+   * Resolves the join request query of the current `chat_join_request` update
+   * @see https://core.telegram.org/bots/api#answerchatjoinrequestquery
+   */
+  answerChatJoinRequestQuery(...args: Shorthand<'answerChatJoinRequestQuery'>) {
+    const queryId = this.chatJoinRequest?.query_id
+    this.assert(queryId, 'answerChatJoinRequestQuery')
+    return this.telegram.answerChatJoinRequestQuery(queryId, ...args)
+  }
+
+  /**
+   * Shows a Mini App for the join request query of the current `chat_join_request` update
+   * @see https://core.telegram.org/bots/api#sendchatjoinrequestwebapp
+   */
+  sendChatJoinRequestWebApp(...args: Shorthand<'sendChatJoinRequestWebApp'>) {
+    const queryId = this.chatJoinRequest?.query_id
+    this.assert(queryId, 'sendChatJoinRequestWebApp')
+    return this.telegram.sendChatJoinRequestWebApp(queryId, ...args)
   }
 
   /**
@@ -1882,9 +2097,11 @@ type GetMsg<U extends tg.Update> = U extends tg.Update.MessageUpdate
             ? U['edited_business_message']
             : U extends tg.Update.DeletedBusinessMessagesUpdate
               ? U['deleted_business_messages']
-              : U extends tg.Update.CallbackQueryUpdate
-                ? U['callback_query']['message']
-                : undefined
+              : U extends tg.Update.GuestMessageUpdate
+                ? U['guest_message']
+                : U extends tg.Update.CallbackQueryUpdate
+                  ? U['callback_query']['message']
+                  : undefined
 
 function getMessageFromAnySource<U extends tg.Update>(ctx: Context<U>) {
   const msg =
@@ -1893,6 +2110,7 @@ function getMessageFromAnySource<U extends tg.Update>(ctx: Context<U>) {
     ctx.businessMessage ??
     ctx.editedBusinessMessage ??
     ctx.deletedBusinessMessages ??
+    ctx.guestMessage ??
     ctx.callbackQuery?.message ??
     ctx.channelPost ??
     ctx.editedChannelPost
@@ -1916,6 +2134,8 @@ type GetUserFromAnySource<U extends tg.Update> =
           | tg.Update.MessageReactionUpdate
           | tg.Update.PollAnswerUpdate
           | tg.Update.ChatBoostUpdate
+          | tg.Update.ManagedBotUpdate
+          | tg.Update.SubscriptionUpdate
       ? tg.User
       : undefined
 
@@ -1935,7 +2155,13 @@ function getUserFromAnySource<U extends tg.Update>(ctx: Context<U>) {
       ctx.myChatMember ??
       ctx.chatJoinRequest
     )?.from ??
-    (ctx.messageReaction ?? ctx.pollAnswer ?? ctx.chatBoost?.boost.source)?.user
+    (
+      ctx.messageReaction ??
+      ctx.pollAnswer ??
+      ctx.chatBoost?.boost.source ??
+      ctx.managedBot ??
+      ctx.subscription
+    )?.user
   )
 }
 
@@ -1978,6 +2204,13 @@ function getTextAndEntitiesFromAnySource<U extends tg.Update>(ctx: Context<U>) {
     ((text = ctx.poll.explanation), (entities = ctx.poll.explanation_entities))
 
   return [text, entities] as const
+}
+
+/** Chat, receiver and identifier of the ephemeral message in the current update */
+const getEphemeralMessage = <U extends tg.Update>(ctx: Context<U>) => {
+  const msg = ctx.msg
+  if (!msg?.has('ephemeral_message_id') || !msg.receiver_user) return undefined
+  return [msg.chat.id, msg.receiver_user.id, msg.ephemeral_message_id] as const
 }
 
 const getThreadId = <U extends tg.Update>(ctx: Context<U>) => {
