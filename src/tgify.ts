@@ -119,7 +119,7 @@ export class Tgify<C extends Context = Context> extends Composer<C> {
     },
     req: http.IncomingMessage
   ) {
-    const debug = d('telegraf:webhook')
+    const debug = d('tgify:webhook')
 
     if (req.method === 'POST') {
       if (safeCompare(this.path, req.url as string)) {

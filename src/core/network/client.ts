@@ -14,7 +14,7 @@ import MultipartStream from './multipart-stream'
 import TelegramError from './error'
 import { URL } from 'url'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const debug = require('debug')('telegraf:client')
+const debug = require('debug')('tgify:client')
 const { isStream } = MultipartStream
 
 const WEBHOOK_REPLY_METHOD_ALLOWLIST = new Set<keyof Telegram>([

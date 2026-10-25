@@ -8,7 +8,7 @@ import { FmtString } from './format'
 import d from 'debug'
 import { Digit, MessageReactions } from './reactions'
 
-const debug = d('telegraf:context')
+const debug = d('tgify:context')
 
 type Tail<T> = T extends [unknown, ...infer U] ? U : never
 

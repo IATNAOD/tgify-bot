@@ -3,7 +3,7 @@ import Composer from '../composer'
 import Context from '../context'
 import d from 'debug'
 import { SessionContext } from '../session'
-const debug = d('telegraf:scenes:context')
+const debug = d('tgify:scenes:context')
 
 const noop = () => Promise.resolve()
 const now = () => Math.floor(Date.now() / 1000)

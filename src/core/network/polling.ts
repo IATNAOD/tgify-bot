@@ -5,7 +5,7 @@ import ApiClient from './client'
 import d from 'debug'
 import { promisify } from 'util'
 import { TelegramError } from './error'
-const debug = d('telegraf:polling')
+const debug = d('tgify:polling')
 const wait = promisify(setTimeout)
 function always<T>(x: T) {
   return () => x

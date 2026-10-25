@@ -8,7 +8,7 @@ import type { RequestListener } from 'http'
 import type { TlsOptions } from 'tls'
 import { Telegraf, type Context, type Middleware } from './index.js'
 
-const debug = d('telegraf:cli')
+const debug = d('tgify:cli')
 
 const helpMsg = `Usage: telegraf [opts] <bot-file>
 
@@ -140,7 +140,7 @@ export async function main(argv: string[], env: Env = {}) {
     }
 
   try {
-    if (args.logs) d.enable('telegraf:*')
+    if (args.logs) d.enable('tgify:*')
 
     const mod: Mod = await import(file)
     const botHandler = mod.botHandler || mod.default

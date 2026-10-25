@@ -2,7 +2,7 @@ import { Context } from './context'
 import { ExclusiveKeys, MaybePromise } from './core/helpers/util'
 import { MiddlewareFn } from './middleware'
 import d from 'debug'
-const debug = d('telegraf:session')
+const debug = d('tgify:session')
 
 export interface SyncSessionStore<T> {
   get: (name: string) => T | undefined

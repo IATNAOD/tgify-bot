@@ -1,7 +1,7 @@
 import * as http from 'http'
 import d from 'debug'
 import { type Update } from '../types/typegram'
-const debug = d('telegraf:webhook')
+const debug = d('tgify:webhook')
 
 export default function generateWebhook(
   filter: (req: http.IncomingMessage) => boolean,
